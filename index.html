@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Süper Çocuk Fotoğraf Stüdyosu & Dijital Dedektif</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti for celebrations -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts: Fredoka & Quicksand -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            font-family: 'Quicksand', 'Fredoka', system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+            user-select: none;
+        }
+
+        /* Monitör ve Retro Bilgisayar Kasası Tasarımı */
+        .monitor-frame {
+            background-color: #fdf6e2;
+            border: 16px solid #fbbf24;
+            border-radius: 36px;
+            box-shadow: 0 20px 0 #d97706, 0 30px 40px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .monitor-stand {
+            width: 140px;
+            height: 45px;
+            background: #d97706;
+            margin: 0 auto;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+        .monitor-base {
+            width: 280px;
+            height: 25px;
+            background: #f59e0b;
+            margin: 0 auto;
+            border-radius: 15px 15px 5px 5px;
+            box-shadow: 0 8px 0 #b45309;
+        }
+
+        /* Masaüstü Duvar Kağıdı Deseni */
+        .desktop-bg {
+            background-color: #38bdf8;
+            background-image: radial-gradient(#7dd3fc 2px, transparent 2px);
+            background-size: 24px 24px;
+        }
+
+        /* Özel Kaydırma Çubukları (Range Sliders) */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type=range]:focus {
+            outline: none;
+        }
+
+        /* Webkit Thumb (Chrome/Safari) */
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 32px;
+            width: 32px;
+            border-radius: 50%;
+            background: #ff4757;
+            cursor: pointer;
+            border: 4px solid #ffffff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            margin-top: -10px;
+            transition: transform 0.1s ease;
+        }
+
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        /* Track Styles */
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 14px;
+            cursor: pointer;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .slider-brightness::-webkit-slider-runnable-track { background: linear-gradient(90deg, #1e293b, #fef08a, #facc15); }
+        .slider-contrast::-webkit-slider-runnable-track { background: linear-gradient(90deg, #94a3b8, #3b82f6, #1d4ed8); }
+        .slider-saturate::-webkit-slider-runnable-track { background: linear-gradient(90deg, #cbd5e1, #ec4899, #be185d); }
+
+        /* Firefox Thumb & Track */
+        input[type=range]::-moz-range-thumb {
+            height: 28px;
+            width: 28px;
+            border-radius: 50%;
+            background: #ff4757;
+            cursor: pointer;
+            border: 4px solid #ffffff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Özel Animasyonlar */
+        @keyframes pulse-gentle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        .animate-pulse-gentle {
+            animation: pulse-gentle 2s infinite ease-in-out;
+        }
+
+        @keyframes bounce-short {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .animate-bounce-short {
+            animation: bounce-short 1s infinite ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        .animate-shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        /* Fotoğraf Parlama Efekti */
+        .photo-container {
+            box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        .photo-success-border {
+            border: 6px solid #22c55e !important;
+            box-shadow: 0 0 25px #22c55e !important;
+        }
+
+        /* 4. Bölüm: Zaman Makinesi Önce / Sonra Karşılaştırma Kaydırıcısı */
+        .vintage-scratches {
+            background-image: 
+                repeating-linear-gradient(90deg, rgba(255,255,255,0.08) 0px, rgba(255,255,255,0.08) 1px, transparent 1px, transparent 35px),
+                repeating-linear-gradient(125deg, rgba(0,0,0,0.2) 0px, rgba(0,0,0,0.2) 2px, transparent 2px, transparent 60px),
+                radial-gradient(circle, transparent 45%, rgba(15, 10, 5, 0.75) 100%);
+            mix-blend-mode: overlay;
+        }
+
+        /* Arka Plan Hareketli Dijital Dedektif İkonları */
+        .bg-floating-icons {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        /* 5. Bölüm: Sihirli Stil Atölyesi Tarama Efekti */
+        @keyframes magicScanLine {
+            0% { top: 0%; opacity: 0; }
+            15% { opacity: 1; }
+            85% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        .magic-scan-active {
+            animation: magicScanLine 0.7s ease-in-out forwards;
+        }
+
+        @keyframes floatIcon {
+            0% {
+                transform: translateY(110vh) rotate(0deg) scale(0.8);
+                opacity: 0;
+            }
+            15% {
+                opacity: 0.6;
+            }
+            85% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-10vh) rotate(360deg) scale(1.1);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 min-h-screen flex flex-col items-center justify-center p-2 sm:p-6 overflow-x-hidden relative">
+
+    <!-- Arka Plan Hareketli Dijital Dedektif İkonları -->
+    <div class="bg-floating-icons">
+        <i class="fa-solid fa-magnifying-glass floating-icon text-4xl" style="left: 5%; animation-duration: 14s; animation-delay: 0s;"></i>
+        <i class="fa-solid fa-shoe-prints floating-icon text-3xl" style="left: 18%; animation-duration: 18s; animation-delay: 3s;"></i>
+        <i class="fa-solid fa-user-secret floating-icon text-5xl" style="left: 32%; animation-duration: 16s; animation-delay: 1s;"></i>
+        <i class="fa-solid fa-award floating-icon text-4xl" style="left: 48%; animation-duration: 13s; animation-delay: 5s;"></i>
+        <i class="fa-solid fa-magnifying-glass floating-icon text-3xl" style="left: 62%; animation-duration: 17s; animation-delay: 2s;"></i>
+        <i class="fa-solid fa-shoe-prints floating-icon text-4xl" style="left: 76%; animation-duration: 15s; animation-delay: 6s;"></i>
+        <i class="fa-solid fa-certificate floating-icon text-4xl" style="left: 88%; animation-duration: 19s; animation-delay: 4s;"></i>
+        <i class="fa-solid fa-star floating-icon text-2xl" style="left: 25%; animation-duration: 11s; animation-delay: 7s;"></i>
+        <i class="fa-solid fa-shield-halved floating-icon text-3xl" style="left: 70%; animation-duration: 15s; animation-delay: 8s;"></i>
+    </div>
+
+    <!-- Ana Monitör Çerçevesi -->
+    <div class="w-full max-w-5xl relative z-10">
+        <div class="monitor-frame p-3 sm:p-6">
+            
+            <!-- Ekran İçi Bilgisayar Arayüzü -->
+            <div class="desktop-bg rounded-2xl border-4 border-amber-300 min-h-[600px] flex flex-col justify-between overflow-hidden relative shadow-inner">
+                
+                <!-- Masaüstü Üst Pencere Çubuğu -->
+                <div class="bg-amber-400 px-4 py-2 flex items-center justify-between border-b-4 border-amber-500 text-amber-900 font-bold text-lg sm:text-xl shadow-md z-20">
+                    <div class="flex items-center gap-2">
+                        <span class="w-4 h-4 rounded-full bg-red-400 inline-block border-2 border-red-500"></span>
+                        <span class="w-4 h-4 rounded-full bg-yellow-400 inline-block border-2 border-yellow-500"></span>
+                        <span class="w-4 h-4 rounded-full bg-green-400 inline-block border-2 border-green-500"></span>
+                        <span class="ml-2 flex items-center gap-2 font-bold tracking-wide text-xs sm:text-lg">
+                            <i class="fa-solid fa-desktop"></i> Dijital Dedektiflik
+                        </span>
+                    </div>
+
+                    <!-- Ana Sayfa Butonu -->
+                    <button onclick="showScreen('home-screen')" class="bg-rose-500 hover:bg-rose-600 text-white px-3 py-1 sm:px-4 sm:py-1.5 rounded-xl font-bold border-b-4 border-rose-700 active:translate-y-1 active:border-b-0 transition flex items-center gap-2 text-sm sm:text-base shadow-lg">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Ana Sayfa</span>
+                    </button>
+                </div>
+
+                <!-- EKRAN 1: ANA SAYFA / AÇILIŞ EKRANI -->
+                <div id="home-screen" class="screen-view flex-1 flex flex-col items-center justify-center p-6 text-center z-10">
+                    <div class="bg-white/90 backdrop-blur-md p-6 sm:p-10 rounded-3xl border-4 border-sky-400 max-w-xl shadow-2xl animate-pulse-gentle">
+                        <div class="w-24 h-24 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-amber-400 shadow-md">
+                            <i class="fa-solid fa-laptop-code text-5xl text-amber-500"></i>
+                        </div>
+                        <h1 class="text-3xl sm:text-4xl font-extrabold text-sky-800 mb-3 tracking-wide">
+                            Süper Dijital Dünya! 🚀
+                        </h1>
+                        <p class="text-sky-900 text-lg sm:text-xl font-medium mb-6 leading-relaxed">
+                            Fotoğrafları düzenle, eğlenceli yapbozları çöz ve Süper Dijital Dedektif rozetini kazanmaya hazırlan!
+                        </p>
+                        <button onclick="showScreen('map-screen')" class="bg-green-500 hover:bg-green-600 text-white text-xl sm:text-2xl font-extrabold px-8 py-4 rounded-2xl border-b-8 border-green-700 active:translate-y-2 active:border-b-0 transition-all shadow-xl flex items-center justify-center gap-3 mx-auto">
+                            <i class="fa-solid fa-play"></i>
+                            <span>ETKİNLİĞE BAŞLA!</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- EKRAN 2: BÖLÜM SEÇİMİ / HARİTA -->
+                <div id="map-screen" class="screen-view hidden flex-1 flex flex-col items-center justify-center p-6 z-10 overflow-y-auto">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white drop-shadow-[0_3px_3px_rgba(0,0,0,0.4)] mb-6 flex items-center gap-3">
+                        <i class="fa-solid fa-map-location-dot text-amber-300"></i> Bölümünü Seç!
+                    </h2>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 w-full max-w-5xl pt-2">
+                        
+                        <!-- 1. Bölüm -->
+                        <div onclick="startLevel(1)" class="bg-white rounded-3xl border-4 border-amber-400 p-4 flex flex-col items-center shadow-xl cursor-pointer hover:scale-105 transition-all group relative pt-7">
+                            <div id="badge-level-1" class="absolute -top-3 -right-2 bg-emerald-500 text-white font-bold text-xs px-3 py-1.5 rounded-full shadow-md z-10 border-2 border-white">
+                                OYNANABİLİR
+                            </div>
+                            <div class="w-14 h-14 bg-amber-100 rounded-2xl flex items-center justify-center mb-3 group-hover:rotate-6 transition-transform">
+                                <i class="fa-solid fa-wand-magic-sparkles text-2xl text-amber-500"></i>
+                            </div>
+                            <h3 class="text-base font-bold text-gray-800 mb-1">1. Bölüm</h3>
+                            <p class="text-amber-600 font-semibold mb-4 text-center text-xs">Fotoğraf Editörü</p>
+                            <button class="w-full bg-amber-400 group-hover:bg-amber-500 text-amber-950 font-bold py-2 rounded-xl border-b-4 border-amber-600 active:border-b-0 text-xs sm:text-sm mt-auto">
+                                Başla! <i class="fa-solid fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+
+                        <!-- 2. Bölüm -->
+                        <div onclick="startLevel(2)" class="bg-white rounded-3xl border-4 border-purple-400 p-4 flex flex-col items-center shadow-xl cursor-pointer hover:scale-105 transition-all group relative pt-7">
+                            <div id="badge-level-2" class="absolute -top-3 -right-2 bg-emerald-500 text-white font-bold text-xs px-3 py-1.5 rounded-full shadow-md z-10 border-2 border-white">
+                                OYNANABİLİR
+                            </div>
+                            <div class="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center mb-3 group-hover:-rotate-6 transition-transform">
+                                <i class="fa-solid fa-puzzle-piece text-2xl text-purple-600"></i>
+                            </div>
+                            <h3 class="text-base font-bold text-gray-800 mb-1">2. Bölüm</h3>
+                            <p class="text-purple-600 font-semibold mb-4 text-center text-xs">Yapay Zeka Yapbozu</p>
+                            <button class="w-full bg-purple-400 group-hover:bg-purple-500 text-purple-950 font-bold py-2 rounded-xl border-b-4 border-purple-600 active:border-b-0 text-xs sm:text-sm mt-auto">
+                                Başla! <i class="fa-solid fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+
+                        <!-- 3. Bölüm (Zaman Makinesi) -->
+                        <div onclick="startLevel(3)" class="bg-white rounded-3xl border-4 border-rose-400 p-4 flex flex-col items-center shadow-xl cursor-pointer hover:scale-105 transition-all group relative pt-7">
+                            <div id="badge-level-3" class="absolute -top-3 -right-2 bg-emerald-500 text-white font-bold text-xs px-3 py-1.5 rounded-full shadow-md z-10 border-2 border-white">
+                                OYNANABİLİR
+                            </div>
+                            <div class="w-14 h-14 bg-rose-100 rounded-2xl flex items-center justify-center mb-3 group-hover:-rotate-6 transition-transform">
+                                <i class="fa-solid fa-clock-rotate-left text-2xl text-rose-500"></i>
+                            </div>
+                            <h3 class="text-base font-bold text-gray-800 mb-1">3. Bölüm</h3>
+                            <p class="text-rose-600 font-semibold mb-4 text-center text-xs">Zaman Makinesi</p>
+                            <button class="w-full bg-rose-400 group-hover:bg-rose-500 text-rose-950 font-bold py-2 rounded-xl border-b-4 border-rose-600 active:border-b-0 text-xs sm:text-sm mt-auto">
+                                Başla! <i class="fa-solid fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+
+                        <!-- 4. Bölüm (Sihirli Stil Atölyesi) -->
+                        <div onclick="startLevel(4)" class="bg-white rounded-3xl border-4 border-fuchsia-400 p-4 flex flex-col items-center shadow-xl cursor-pointer hover:scale-105 transition-all group relative pt-7">
+                            <div id="badge-level-4" class="absolute -top-3 -right-2 bg-emerald-500 text-white font-bold text-xs px-3 py-1.5 rounded-full shadow-md z-10 border-2 border-white">
+                                OYNANABİLİR
+                            </div>
+                            <div class="w-14 h-14 bg-fuchsia-100 rounded-2xl flex items-center justify-center mb-3 group-hover:rotate-6 transition-transform">
+                                <i class="fa-solid fa-palette text-2xl text-fuchsia-600"></i>
+                            </div>
+                            <h3 class="text-base font-bold text-gray-800 mb-1">4. Bölüm</h3>
+                            <p class="text-fuchsia-600 font-semibold mb-4 text-center text-xs">Sihirli Stil Atölyesi</p>
+                            <button class="w-full bg-fuchsia-400 group-hover:bg-fuchsia-500 text-fuchsia-950 font-bold py-2 rounded-xl border-b-4 border-fuchsia-600 active:border-b-0 text-xs sm:text-sm mt-auto">
+                                Başla! <i class="fa-solid fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+
+                        <!-- 5. Bölüm (Dijital Dedektif) -->
+                        <div onclick="startLevel(5)" class="bg-white rounded-3xl border-4 border-teal-400 p-4 flex flex-col items-center shadow-xl cursor-pointer hover:scale-105 transition-all group relative pt-7">
+                            <div id="badge-level-5" class="absolute -top-3 -right-2 bg-emerald-500 text-white font-bold text-xs px-3 py-1.5 rounded-full shadow-md z-10 border-2 border-white">
+                                OYNANABİLİR
+                            </div>
+                            <div class="w-14 h-14 bg-teal-100 rounded-2xl flex items-center justify-center mb-3 group-hover:rotate-6 transition-transform">
+                                <i class="fa-solid fa-user-ninja text-2xl text-teal-600"></i>
+                            </div>
+                            <h3 class="text-base font-bold text-gray-800 mb-1">5. Bölüm</h3>
+                            <p class="text-teal-600 font-semibold mb-4 text-center text-xs">Dijital Dedektif</p>
+                            <button class="w-full bg-teal-400 group-hover:bg-teal-500 text-teal-950 font-bold py-2 rounded-xl border-b-4 border-teal-600 active:border-b-0 text-xs sm:text-sm mt-auto">
+                                Başla! <i class="fa-solid fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- EKRAN 3: 1. SEVİYE - FOTOĞRAF EDİTÖRÜ -->
+                <div id="game-screen" class="screen-view hidden flex-1 flex flex-col p-4 sm:p-6 z-10">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4 bg-white/80 backdrop-blur p-3 rounded-2xl border-2 border-amber-300">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-amber-500 text-white font-bold px-3 py-1 rounded-xl text-xs sm:text-sm shadow">
+                                Bölüm 1
+                            </span>
+                            <h2 id="photo-title" class="font-extrabold text-amber-950 text-sm sm:text-base">
+                                1. Doğa Manzarası 🌲
+                            </h2>
+                        </div>
+                        <div id="step-indicators" class="flex items-center gap-2"></div>
+                    </div>
+
+                    <div class="flex-1 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                        <div class="md:col-span-7 flex flex-col items-center justify-center">
+                            <div id="photo-frame" class="photo-container relative rounded-3xl overflow-hidden bg-slate-900 border-4 border-white w-full max-w-md aspect-[4/3] flex items-center justify-center">
+                                <img id="editable-image" src="" alt="Düzenlenecek Görsel" class="w-full h-full object-cover transition-all duration-150">
+                                <div id="success-badge" class="hidden absolute inset-0 bg-black/40 backdrop-blur-sm flex flex-col items-center justify-center text-white text-center p-4 animate-bounce-short">
+                                    <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-3xl shadow-lg mb-2">✨</div>
+                                    <span class="text-2xl font-extrabold text-yellow-300 drop-shadow">HARİKA İŞ!</span>
+                                    <span class="text-sm font-bold">Fotoğraf Işıl Işıl Oldu!</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="md:col-span-5 bg-white/90 backdrop-blur-md p-4 sm:p-5 rounded-3xl border-4 border-amber-300 shadow-xl flex flex-col gap-4">
+                            <h3 class="text-amber-950 font-bold text-base border-b-2 border-amber-200 pb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-sliders text-amber-500"></i> Sihirli Ayarlar
+                            </h3>
+                            <div>
+                                <div class="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-700 mb-1">
+                                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-sun text-amber-500"></i> Parlaklık</span>
+                                    <span id="brightness-val" class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded-md">100%</span>
+                                </div>
+                                <input type="range" id="brightness-slider" min="10" max="200" value="30" class="slider-brightness" oninput="updateImageFilters()">
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-700 mb-1">
+                                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-half-stroke text-blue-500"></i> Kontrast / Işık</span>
+                                    <span id="contrast-val" class="bg-blue-100 text-blue-900 px-2 py-0.5 rounded-md">100%</span>
+                                </div>
+                                <input type="range" id="contrast-slider" min="10" max="200" value="30" class="slider-contrast" oninput="updateImageFilters()">
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-700 mb-1">
+                                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-droplet text-pink-500"></i> Renk Doygunluğu</span>
+                                    <span id="saturate-val" class="bg-pink-100 text-pink-900 px-2 py-0.5 rounded-md">100%</span>
+                                </div>
+                                <input type="range" id="saturate-slider" min="0" max="250" value="20" class="slider-saturate" oninput="updateImageFilters()">
+                            </div>
+                            <button id="next-btn" onclick="nextPhoto()" disabled class="w-full bg-gray-300 text-gray-500 font-extrabold py-3 rounded-2xl border-b-4 border-gray-400 cursor-not-allowed transition-all text-base sm:text-lg flex items-center justify-center gap-2 mt-1">
+                                <span>Sıradaki Fotoğraf</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EKRAN 3.5: 2. SEVİYE GALERİ EKRANI -->
+                <div id="puzzle-gallery-screen" class="screen-view hidden flex-1 flex flex-col p-4 sm:p-6 z-10 overflow-y-auto">
+                    <div class="text-center mb-6">
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] mb-2 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-images text-yellow-300"></i> Yapboz Resmini Seç!
+                        </h2>
+                        <p class="text-white text-sm sm:text-base font-medium drop-shadow">Tamamlamak istediğin sevimli karakteri tıkla ve oyuna başla!</p>
+                    </div>
+                    <div id="puzzle-gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-4xl mx-auto w-full pb-6"></div>
+                </div>
+
+                <!-- EKRAN 3.6: 2. SEVİYE OYUN ALANI (3x3 YAPBOZ) -->
+                <div id="puzzle-game-screen" class="screen-view hidden flex-1 flex flex-col p-3 sm:p-5 z-10 relative">
+                    <!-- İpucu Pop-Up Modal -->
+                    <div id="puzzle-hint-modal" class="hidden absolute inset-0 bg-black/60 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-4">
+                        <div class="bg-white p-4 rounded-3xl border-4 border-amber-400 shadow-2xl flex flex-col items-center animate-pulse-gentle max-w-xs sm:max-w-sm">
+                            <h4 class="text-amber-950 font-extrabold text-base mb-2 flex items-center gap-1.5">
+                                💡 İpucu Görseli
+                            </h4>
+                            <div class="w-64 h-64 sm:w-72 sm:h-72 rounded-2xl overflow-hidden border-4 border-slate-800 shadow-lg">
+                                <img id="puzzle-hint-img" src="" class="w-full h-full object-cover">
+                            </div>
+                            <span class="text-xs font-bold text-amber-700 mt-2">2 saniye sonra kapanacak...</span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3 bg-white/80 backdrop-blur p-2.5 rounded-2xl border-2 border-purple-300">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-purple-600 text-white font-bold px-3 py-1 rounded-xl text-xs sm:text-sm">Bölüm 2</span>
+                            <h2 id="puzzle-active-title" class="font-bold text-purple-950 text-sm sm:text-base">Pilot Baykuş</h2>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="togglePuzzleHint()" class="bg-amber-400 hover:bg-amber-500 text-amber-950 font-extrabold px-3 py-1.5 rounded-xl border-b-2 border-amber-600 text-xs sm:text-sm flex items-center gap-1.5 shadow">
+                                <i class="fa-solid fa-lightbulb text-amber-900"></i>
+                                <span>İpucu Göster</span>
+                            </button>
+                            <button onclick="showScreen('puzzle-gallery-screen')" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-3 py-1.5 rounded-xl text-xs sm:text-sm">
+                                <i class="fa-solid fa-arrow-left"></i> Galeri
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex-1 grid grid-cols-1 md:grid-cols-12 gap-4 items-center justify-center">
+                        <div class="md:col-span-5 bg-white/85 backdrop-blur-md p-3 sm:p-4 rounded-3xl border-4 border-purple-300 shadow-xl flex flex-col items-center">
+                            <h3 class="text-purple-950 font-bold text-sm mb-2 flex items-center gap-1.5">
+                                <i class="fa-solid fa-cubes text-purple-600"></i> Karışık Parçalar
+                            </h3>
+                            <p class="text-xs text-purple-800 font-medium mb-3 text-center">Parçayı sürükle veya tıkla-seç, ardından sağdaki doğru yuvaya yerleştir!</p>
+                            <div id="puzzle-pieces-pool" class="grid grid-cols-3 gap-2 w-full max-w-[270px] min-h-[270px] bg-purple-50/50 p-2 rounded-2xl border-2 border-dashed border-purple-200"></div>
+                        </div>
+                        <div class="md:col-span-7 flex flex-col items-center justify-center">
+                            <div class="relative">
+                                <div id="puzzle-board" class="grid grid-cols-3 gap-1.5 bg-slate-900 p-2 rounded-2xl border-8 border-white shadow-2xl relative z-10 w-[270px] h-[270px] sm:w-[320px] sm:h-[320px]"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EKRAN 3.7: 5. SEVİYE - DİJİTAL DEDEKTİF TESTİ -->
+                <div id="detective-screen" class="screen-view hidden flex-1 flex flex-col p-4 sm:p-6 z-10 overflow-y-auto">
+                    <!-- Üst Bilgi Paneli -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4 bg-white/90 backdrop-blur p-3 rounded-2xl border-2 border-teal-300 shadow-md">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-teal-600 text-white font-bold px-3 py-1 rounded-xl text-xs sm:text-sm">
+                                Bölüm 5
+                            </span>
+                            <h2 class="font-bold text-teal-950 text-sm sm:text-base flex items-center gap-1">
+                                🕵️‍♂️ Süper Dijital Dedektif Sınavı
+                            </h2>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span id="quiz-progress-text" class="text-xs sm:text-sm font-extrabold text-teal-800 bg-teal-100 px-3 py-1 rounded-xl">
+                                Soru 1 / 15
+                            </span>
+                            <div class="flex items-center gap-1 bg-amber-100 text-amber-900 font-bold px-3 py-1 rounded-xl text-xs sm:text-sm border border-amber-300">
+                                <i class="fa-solid fa-award text-amber-500"></i>
+                                <span id="detective-score">0 Rozet</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- İlerleme Çubuğu -->
+                    <div class="w-full bg-slate-200 h-3 rounded-full mb-4 overflow-hidden border border-slate-300">
+                        <div id="quiz-progress-bar" class="bg-teal-500 h-full transition-all duration-300 w-0"></div>
+                    </div>
+
+                    <!-- Soru Kartı -->
+                    <div class="flex-1 flex flex-col items-center justify-center">
+                        <div id="quiz-card" class="bg-white/95 backdrop-blur-md p-6 sm:p-8 rounded-3xl border-4 border-teal-400 max-w-2xl w-full shadow-2xl relative">
+                            
+                            <!-- Kısım Başlığı -->
+                            <div id="quiz-section-title" class="inline-block bg-teal-100 text-teal-900 text-xs sm:text-sm font-bold px-3 py-1 rounded-full mb-3 border border-teal-300">
+                                1. KISIM: Doğru mu, Yanlış mı?
+                            </div>
+
+                            <!-- Soru Metni -->
+                            <h3 id="quiz-question-text" class="text-lg sm:text-xl font-extrabold text-slate-800 mb-6 leading-snug">
+                                Soru yükleniyor...
+                            </h3>
+
+                            <!-- Geribildirim Uyarısı (Yanlış Cevaplarda Çıkar) -->
+                            <div id="quiz-feedback" class="hidden p-3 mb-4 rounded-xl text-sm font-bold text-center animate-shake"></div>
+
+                            <!-- Cevap Seçenekleri Alanı (D/Y veya Şıklar) -->
+                            <div id="quiz-options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <!-- JS ile Dinamik Doldurulur -->
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EKRAN 3.8: 3. SEVİYE - ZAMAN MAKİNESİ: ESKİ FOTOĞRAFLARI CANLANDIR -->
+                <div id="timemachine-screen" class="screen-view hidden flex-1 flex flex-col p-4 sm:p-5 z-10 overflow-y-auto">
+                    <!-- Üst Bilgi Barı -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3 bg-white/90 backdrop-blur p-3 rounded-2xl border-2 border-rose-300 shadow-md">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-rose-500 text-white font-bold px-3 py-1 rounded-xl text-xs sm:text-sm shadow">
+                                Bölüm 3
+                            </span>
+                            <h2 id="tm-title" class="font-extrabold text-rose-950 text-sm sm:text-base">
+                                Zaman Makinesi: 1940'lar Aile Portresi
+                            </h2>
+                        </div>
+                        <div id="tm-step-indicators" class="flex items-center gap-2"></div>
+                    </div>
+
+                    <!-- Yönerge Kutusu -->
+                    <div class="bg-amber-100/95 border-2 border-amber-400 text-amber-950 px-4 py-2 rounded-2xl text-center font-bold text-xs sm:text-sm mb-3 shadow-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-wand-sparkles text-rose-500 text-base"></i>
+                        <span>Eski ve yıpranmış fotoğrafları kurtarmak için sihirli çubuğu sağa doğru kaydır!</span>
+                    </div>
+
+                    <!-- Etkileşimli Önce / Sonra Karşılaştırma Çerçevesi -->
+                    <div class="flex-1 flex flex-col items-center justify-center">
+                        <div id="tm-compare-container" class="relative w-full max-w-xl aspect-[16/10] rounded-3xl overflow-hidden border-4 border-white shadow-2xl select-none touch-none cursor-ew-resize bg-slate-900">
+                            
+                            <!-- ALT KATMAN (SOL TARAFTAKİ ESKİ / YIPRANMIŞ HALİ) -->
+                            <div class="absolute inset-0 w-full h-full">
+                                <img id="tm-img-before" src="" alt="Eski Fotoğraf" class="w-full h-full object-cover grayscale contrast-125 brightness-75 sepia-[.35]">
+                                <div class="vintage-scratches absolute inset-0 pointer-events-none"></div>
+                                <span class="absolute top-3 left-3 bg-slate-900/80 text-amber-200 text-xs font-extrabold px-3 py-1 rounded-full border border-amber-400/50 backdrop-blur-sm">
+                                    ESKİ HALİ 🕰️
+                                </span>
+                            </div>
+
+                            <!-- ÜST KATMAN (SAĞA KAYDIRILDIKÇA ORTAYA ÇIKAN CANLI RENKLİ HALİ) -->
+                            <div id="tm-after-wrapper" class="absolute inset-0 w-full h-full" style="clip-path: inset(0 100% 0 0);">
+                                <img id="tm-img-after" src="" alt="Onarılmış Fotoğraf" class="w-full h-full object-cover saturate-125 contrast-105 brightness-105">
+                                <span class="absolute top-3 right-3 bg-emerald-600/90 text-white text-xs font-extrabold px-3 py-1 rounded-full border border-emerald-300 backdrop-blur-sm shadow">
+                                    CANLI HALİ ✨
+                                </span>
+                            </div>
+
+                            <!-- SİHİRLİ KAYDIRMA ÇUBUĞU VE TUTAMAÇ (↔) -->
+                            <div id="tm-slider-handle" class="absolute top-0 bottom-0 w-1.5 bg-amber-300 shadow-[0_0_15px_rgba(251,191,36,1)] pointer-events-none" style="left: 0%;">
+                                <div class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-gradient-to-tr from-rose-500 to-amber-400 border-4 border-white shadow-xl flex items-center justify-center text-white font-black text-lg">
+                                    ↔
+                                </div>
+                            </div>
+
+                            <!-- TAMAMLANMA MESAJI KATMANI -->
+                            <div id="tm-success-overlay" class="hidden absolute inset-0 bg-black/35 backdrop-blur-[2px] flex flex-col items-center justify-center text-center p-4 pointer-events-none">
+                                <div class="bg-white/95 px-6 py-4 rounded-3xl border-4 border-emerald-400 shadow-2xl animate-bounce-short">
+                                    <span class="text-3xl block mb-1">🎉✨</span>
+                                    <h3 class="text-lg sm:text-xl font-extrabold text-emerald-700">Harika! Fotoğraf onarıldı ve renklendi!</h3>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Alt Kontrol / İlerleme ve Sonraki Butonu -->
+                        <div class="w-full max-w-xl mt-4 flex items-center justify-between gap-4 bg-white/90 p-3 rounded-2xl border-2 border-rose-200 shadow">
+                            <div class="flex items-center gap-2 text-sm font-extrabold text-rose-900">
+                                <i class="fa-solid fa-sparkles text-amber-500"></i>
+                                <span>Onarım Oranı: <span id="tm-percent-text" class="text-rose-600">%0</span></span>
+                            </div>
+                            <button id="tm-next-btn" onclick="nextTimeMachinePhoto()" class="hidden bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold px-5 py-2.5 rounded-xl border-b-4 border-emerald-700 active:border-b-0 transition shadow-lg flex items-center gap-2 text-sm sm:text-base animate-pulse-gentle">
+                                <span>Sonraki Fotoğrafa Geç</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EKRAN 3.9: 4. SEVİYE - SİHİRLİ STİL ATÖLYESİ -->
+                <div id="style-workshop-screen" class="screen-view hidden flex-1 flex flex-col p-4 sm:p-5 z-10 overflow-y-auto">
+                    
+                    <!-- ALT GÖRÜNÜM A: BAŞLANGIÇ SEÇİM EKRANI (3 Karakter Kartı) -->
+                    <div id="style-select-view" class="flex-1 flex flex-col items-center justify-center">
+                        <div class="text-center mb-5 bg-white/90 backdrop-blur px-6 py-3 rounded-3xl border-4 border-fuchsia-300 shadow-lg max-w-2xl">
+                            <span class="bg-fuchsia-500 text-white font-bold px-3 py-0.5 rounded-full text-xs uppercase tracking-wider mb-1 inline-block">
+                                4. Bölüm: Sihirli Stil Atölyesi 🎨
+                            </span>
+                            <h2 class="text-lg sm:text-2xl font-extrabold text-fuchsia-950">
+                                Bir fotoğraf seç ve yapay zeka ile onu çizgi film kahramanına dönüştür!
+                            </h2>
+                        </div>
+
+                        <div id="style-characters-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl w-full">
+                            <!-- JS ile 3 Karakter Kartı Doldurulur -->
+                        </div>
+                    </div>
+
+                    <!-- ALT GÖRÜNÜM B: STİL DÖNÜŞTÜRME STÜDYOSU -->
+                    <div id="style-studio-view" class="hidden flex-1 flex flex-col items-center justify-between gap-3">
+                        
+                        <!-- Üst Bilgi ve Başka Karakter Seç Butonu -->
+                        <div class="w-full max-w-3xl flex flex-wrap items-center justify-between gap-2 bg-white/90 backdrop-blur p-2.5 rounded-2xl border-2 border-fuchsia-300 shadow">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-fuchsia-600 text-white font-bold px-3 py-1 rounded-xl text-xs sm:text-sm">Bölüm 4</span>
+                                <h3 id="style-active-char-name" class="font-extrabold text-fuchsia-950 text-sm sm:text-base">Gülümseyen Gözlüklü Çocuk</h3>
+                                <span id="style-active-badge" class="bg-sky-100 text-sky-900 border border-sky-300 text-xs font-extrabold px-2.5 py-0.5 rounded-full">
+                                    📷 Orijinal Hali
+                                </span>
+                            </div>
+                            <button onclick="backToStyleSelection()" class="bg-amber-400 hover:bg-amber-500 text-amber-950 font-extrabold px-3 py-1.5 rounded-xl border-b-2 border-amber-600 text-xs sm:text-sm flex items-center gap-1.5 shadow">
+                                <i class="fa-solid fa-users"></i>
+                                <span>Başka Karakter Seç</span>
+                            </button>
+                        </div>
+
+                        <!-- Ortadaki Büyük Karakter Çerçevesi -->
+                        <div class="relative w-60 h-60 sm:w-72 sm:h-72 rounded-3xl overflow-hidden border-8 border-white bg-slate-900 shadow-2xl flex items-center justify-center">
+                            <img id="style-preview-img" src="" alt="Seçilen Karakter" class="w-full h-full object-cover rounded-2xl transition-all duration-300">
+                            <!-- Sihirli Tarama Işını -->
+                            <div id="style-scan-beam" class="hidden absolute left-0 right-0 h-3 bg-gradient-to-r from-transparent via-fuchsia-400 to-transparent shadow-[0_0_20px_#e879f9] z-20 pointer-events-none"></div>
+                        </div>
+
+                        <!-- 4 Adet Etkileşimli Yapay Zeka Stil Butonu -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full max-w-3xl">
+                            <button id="btn-style-original" onclick="applyCharacterStyle('original')" class="style-filter-btn bg-sky-500 hover:bg-sky-600 text-white font-extrabold py-2.5 px-3 rounded-2xl border-b-4 border-sky-700 active:border-b-0 shadow-md text-xs sm:text-sm flex items-center justify-center gap-1.5 transition">
+                                <span>📷</span>
+                                <span>Orijinal Hali</span>
+                            </button>
+                            <button id="btn-style-anime" onclick="applyCharacterStyle('anime')" class="style-filter-btn bg-pink-500 hover:bg-pink-600 text-white font-extrabold py-2.5 px-3 rounded-2xl border-b-4 border-pink-700 active:border-b-0 shadow-md text-xs sm:text-sm flex items-center justify-center gap-1.5 transition">
+                                <span>🌸</span>
+                                <span>Anime Karakteri Yap</span>
+                            </button>
+                            <button id="btn-style-cartoon" onclick="applyCharacterStyle('cartoon')" class="style-filter-btn bg-amber-400 hover:bg-amber-500 text-amber-950 font-extrabold py-2.5 px-3 rounded-2xl border-b-4 border-amber-600 active:border-b-0 shadow-md text-xs sm:text-sm flex items-center justify-center gap-1.5 transition">
+                                <span>🎬</span>
+                                <span>Çizgi Film Karakteri Yap</span>
+                            </button>
+                            <button id="btn-style-comic" onclick="applyCharacterStyle('comic')" class="style-filter-btn bg-purple-600 hover:bg-purple-700 text-white font-extrabold py-2.5 px-3 rounded-2xl border-b-4 border-purple-800 active:border-b-0 shadow-md text-xs sm:text-sm flex items-center justify-center gap-1.5 transition">
+                                <span>💥</span>
+                                <span>Çizgi Roman Karakteri Yap</span>
+                            </button>
+                        </div>
+
+                        <!-- Dijital Dedektif Bilgi Kutusu ve Bölüm Tamamlama Butonu (En az bir dönüşüm yapıldığında belirir) -->
+                        <div id="style-detective-box" class="hidden w-full max-w-3xl bg-white/95 backdrop-blur-md p-3.5 rounded-2xl border-4 border-emerald-400 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-3 animate-pulse-gentle">
+                            <div class="flex items-start gap-2.5 text-left">
+                                <span class="text-2xl shrink-0">🕵️‍♂️</span>
+                                <p class="text-xs sm:text-sm font-bold text-slate-800 leading-snug">
+                                    Harika! Yapay zeka gerçek bir fotoğrafı saniyeler içinde bambaşka bir çizim stiline dönüştürdü. Artık bu resim gerçek bir fotoğraf değil, yapay zeka ile değiştirilmiş (alter edilmiş) bir görseldir!
+                                </p>
+                            </div>
+                            <button onclick="showCompletionScreen(4)" class="shrink-0 bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold px-4 py-2.5 rounded-xl border-b-4 border-emerald-700 active:border-b-0 shadow-lg text-xs sm:text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-award"></i>
+                                <span>Bölümü Tamamla</span>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- EKRAN 4: BÖLÜM TAMAMLANDI VE SERTİFİKA EKRANI -->
+                <div id="completion-screen" class="screen-view hidden flex-1 flex flex-col items-center justify-center p-4 sm:p-6 text-center z-10 overflow-y-auto">
+                    <div class="bg-white/95 backdrop-blur-md p-6 sm:p-8 rounded-3xl border-8 border-yellow-400 max-w-lg w-full shadow-2xl my-auto">
+                        <div class="w-24 h-24 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3 border-4 border-yellow-400 shadow-inner animate-bounce-short">
+                            <span id="completion-icon" class="text-5xl">🏆</span>
+                        </div>
+                        <h2 id="completion-title" class="text-2xl sm:text-3xl font-extrabold text-sky-900 mb-2">
+                            MUHTEŞEMSİN! 🎉
+                        </h2>
+                        <p id="completion-desc" class="text-sm sm:text-base text-sky-800 font-bold mb-4">
+                            Bölümü Başarıyla Tamamladın!
+                        </p>
+
+                        <!-- Sertifika Alanı (Final Bölümlerinde Görünür) -->
+                        <div id="certificate-box" class="hidden bg-amber-50 p-4 rounded-2xl border-2 border-dashed border-amber-400 mb-5 text-left">
+                            <div class="text-center mb-2">
+                                <span id="certificate-badge-title" class="bg-amber-400 text-amber-950 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
+                                    📜 USTA DİJİTAL DEDEKTİF SERTİFİKASI
+                                </span>
+                            </div>
+                            <p id="certificate-subtitle" class="text-xs font-bold text-amber-900 text-center mb-2">
+                                Geleceğin Dijital Okuryazar Rozetli Usta Dedektifi! 🕵️‍♂️✨
+                            </p>
+                            <div id="certificate-earned-badges" class="flex flex-wrap justify-center gap-1.5 mb-3 text-xs font-extrabold">
+                                <!-- Kazanılan rozetler JS ile gösterilir -->
+                            </div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Dedektifin Adı ve Soyadı:</label>
+                            <input type="text" id="detective-name-input" placeholder="Adını buraya yaz..." oninput="updateCertificateNamePreview()" class="w-full p-2 text-sm rounded-xl border-2 border-amber-300 font-bold focus:outline-none focus:border-amber-500 bg-white">
+                            <p id="certificate-live-greeting" class="hidden text-center text-xs font-extrabold text-emerald-700 mt-2"></p>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                            <button onclick="showScreen('map-screen')" class="bg-amber-400 hover:bg-amber-500 text-amber-950 font-extrabold px-5 py-2.5 rounded-xl border-b-4 border-amber-600 active:border-b-0 transition flex items-center justify-center gap-2 text-sm sm:text-base">
+                                <i class="fa-solid fa-map"></i>
+                                <span>Haritaya Dön</span>
+                            </button>
+                            <button id="completion-replay-btn" onclick="startLevel(1)" class="bg-green-500 hover:bg-green-600 text-white font-extrabold px-5 py-2.5 rounded-xl border-b-4 border-green-700 active:border-b-0 transition flex items-center justify-center gap-2 text-sm sm:text-base">
+                                <i class="fa-solid fa-rotate-right"></i>
+                                <span>Tekrar Oyna</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Masaüstü Başlat Çubuğu (Bottom Bar) -->
+                <div class="bg-sky-900/90 backdrop-blur px-4 py-2 flex items-center justify-center border-t-2 border-sky-700 text-white text-xs sm:text-sm z-20">
+                    <!-- Bilfen Logo Area (Ortalanmış) -->
+                    <div class="bg-white/95 px-4 py-1 rounded-xl shadow flex items-center justify-center">
+                        <img src="https://i.ibb.co/XkjKh6hx/Bilfen-Logo.png" alt="Bilfen Logosu" class="h-6 sm:h-7 object-contain">
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Monitör Ayak Yapısı -->
+        <div class="monitor-stand"></div>
+        <div class="monitor-base"></div>
+    </div>
+
+    <!-- JAVASCRIPT OYUN MANTIĞI -->
+    <script>
+        // Web Audio API Ses Oluşturucu
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.05);
+                osc.start(now);
+                osc.stop(now + 0.05);
+            } else if (type === 'pop') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+                gain.gain.setValueAtTime(0.4, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.1);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            } else if (type === 'win') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.setValueAtTime(659.25, now + 0.1);
+                osc.frequency.setValueAtTime(783.99, now + 0.2);
+                osc.frequency.setValueAtTime(1046.50, now + 0.3);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.5);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            } else if (type === 'error') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.setValueAtTime(120, now + 0.1);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.25);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            }
+        }
+
+        function showScreen(screenId) {
+            playSound('pop');
+            document.querySelectorAll('.screen-view').forEach(el => el.classList.add('hidden'));
+            document.getElementById(screenId).classList.remove('hidden');
+
+            if (screenId === 'map-screen') {
+                updateMapBadges();
+            }
+        }
+
+        function updateMapBadges() {
+            for (let i = 1; i <= 5; i++) {
+                const badge = document.getElementById(`badge-level-${i}`);
+                if (badge) {
+                    if (completedLevels[i]) {
+                        badge.innerText = "TAMAMLANDI ✓";
+                        badge.className = "absolute -top-3 -right-2 bg-emerald-600 text-white font-bold text-xs px-3 py-1.5 rounded-full shadow-md z-10 border-2 border-white";
+                    } else {
+                        badge.innerText = "OYNANABİLİR";
+                        badge.className = "absolute -top-3 -right-2 bg-sky-500 text-white font-bold text-xs px-3 py-1.5 rounded-full shadow-md z-10 border-2 border-white";
+                    }
+                }
+            }
+        }
+
+        // --- 5. SEVİYE: SİHİRLİ STİL ATÖLYESİ KARAKTER VERİLERİ ---
+        const styleCharacters = [
+            {
+                id: 1,
+                name: "Gülümseyen Gözlüklü Çocuk",
+                images: {
+                    original: "https://i.ibb.co/5hWVj4dW/G-l-mseyen-g-zl-kl-ocuk.png",
+                    anime: "https://i.ibb.co/PZ6Rpwgk/G-l-mseyen-g-zl-kl-ocuk-1.png",
+                    cartoon: "https://i.ibb.co/HfRdYVWR/G-l-mseyen-g-zl-kl-ocuk-2.png",
+                    comic: "https://i.ibb.co/h6vG5Rz/G-l-mseyen-g-zl-kl-ocuk-3.png"
+                }
+            },
+            {
+                id: 2,
+                name: "Kıvırcık Saçlı Kız",
+                images: {
+                    original: "https://i.ibb.co/Swr6xdqR/Canva-Yapay-Zeka-G-rseli-12-Kas-2026-12-46-14.png",
+                    anime: "https://i.ibb.co/8LJgDrVv/Canva-Yapay-Zeka-G-rseli-12-Kas-2026-12-48-05.png",
+                    cartoon: "https://i.ibb.co/9kYy706s/Canva-Yapay-Zeka-G-rseli-12-Kas-2026-12-48-52.png",
+                    comic: "https://i.ibb.co/Y7gxq8LN/K-v-rc-k-Sa-l-K-z-ocu-u-1.png"
+                }
+            },
+            {
+                id: 3,
+                name: "Sevimli Kedi",
+                images: {
+                    original: "https://i.ibb.co/vM5v38n/Sevimli-ger-ek-kedi.png",
+                    anime: "https://i.ibb.co/CpsGvK07/Sevimli-ger-ek-kedi-3.png",
+                    cartoon: "https://i.ibb.co/wFV1vQ1J/Sevimli-ger-ek-kedi-2.png",
+                    comic: "https://i.ibb.co/DHRwgRL9/Sevimli-ger-ek-kedi-1.png"
+                }
+            }
+        ];
+
+        // --- 4. SEVİYE ZAMAN MAKİNESİ FOTOĞRAF VERİLERİ ---
+        const timeMachinePhotos = [
+            {
+                id: 1,
+                title: "Seviye 1: 1940'lardan Sıcak Aile Portresi 👨‍👩‍👧‍👦",
+                url: "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=900&q=80"
+            },
+            {
+                id: 2,
+                title: "Seviye 2: 1950'lerden Sokakta Bisiklet Süren Çocuk 🚲",
+                url: "https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?auto=format&fit=crop&w=900&q=80"
+            },
+            {
+                id: 3,
+                title: "Seviye 3: 1960'lardan Güneşli Deniz Kenarı Manzarası 🏖️",
+                url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80"
+            }
+        ];
+
+        // --- 3. SEVİYE DİJİTAL DEDEKTİF SORU VERİLERİ ---
+        const detectiveQuestions = [
+            // 🔵 1. KISIM: Doğru / Yanlış (8 Soru)
+            { id: 1, type: "DY", section: "1. KISIM: Doğru mu, Yanlış mı?", text: "1. İnternette gördüğümüz tüm fotoğraflar %100 gerçektir ve hemen inanabiliriz.", answer: "Y" },
+            { id: 2, type: "DY", section: "1. KISIM: Doğru mu, Yanlış mı?", text: "2. Bir fotoğrafın görünüşünü bilgisayar veya dijital araçlarla değiştirmeye \"görseli değiştirmek\" (alter etmek) denir.", answer: "D" },
+            { id: 3, type: "DY", section: "1. KISIM: Doğru mu, Yanlış mı?", text: "3. Yapay zeka, daha önce hiç var olmamış sıfırdan yeni resimler oluşturabilir.", answer: "D" },
+            { id: 4, type: "DY", section: "1. KISIM: Doğru mu, Yanlış mı?", text: "4. İnsanlar fotoğrafları sadece eğlenmek veya şaka yapmak için değiştirirler; başka hiçbir nedeni yoktur.", answer: "Y" },
+            { id: 5, type: "DY", section: "1. KISIM: Doğru mu, Yanlış mı?", text: "5. Eskiden sanatçılar resimleri değiştirmek için boya ve makas kullanırken, günümüzde bilgisayarlar saniyeler içinde yeni görüntüler oluşturabilir.", answer: "D" },
+            { id: 6, type: "DY", section: "1. KISIM: Doğru mu, Yanlış mı?", text: "6. \"İkna etmek\", birini bir şeye inanmaya veya bir şey yapmaya razı etmeye çalışmaktır.", answer: "D" },
+            { id: 7, type: "DY", section: "1. KISIM: Doğru mu, Yanlış mı?", text: "7. Yapay zekaya \"Ayda futbol oynayan fil\" yazarsak, yapay zeka bunun gerçek bir fotoğrafını çekmek için uzaya gider.", answer: "Y" },
+            { id: 8, type: "DY", section: "1. KISIM: Doğru mu, Yanlış mı?", text: "8. Şüpheli bir resim gördüğümüzde kendimize \"Bu resmi kim yarattı ve neden yarattı?\" diye sormalıyız.", answer: "D" },
+
+            // 🔵 2. KISIM: Çoktan Seçmeli Sorular (7 Soru)
+            {
+                id: 9, type: "MC", section: "2. KISIM: Çoktan Seçmeli Test",
+                text: "1. Bir alışveriş reklamında oyuncak ayı olduğundan çok daha devasa ve parıltılı görünmektedir. Bu fotoğrafın değiştirilme sebebi aşağıdakilerden hangisidir?",
+                options: [
+                    { label: "A", text: "Bizi güldürmek ve eğlendirmek" },
+                    { label: "B", text: "Oyuncağı satın almamız için bizi ikna etmek" },
+                    { label: "C", text: "Oyuncağı saklamak" }
+                ],
+                answer: "B"
+            },
+            {
+                id: 10, type: "MC", section: "2. KISIM: Çoktan Seçmeli Test",
+                text: "2. Aşağıdaki resimlerden hangisinin Yapay Zeka (AI) tarafından uydurulmuş olma ihtimali en yüksektir?",
+                options: [
+                    { label: "A", text: "Parkta yürüyen bir köpek" },
+                    { label: "B", text: "Sınıfta ders dinleyen öğrenciler" },
+                    { label: "C", text: "Güneş gözlüğü takıp paten kayan bir zürafa" }
+                ],
+                answer: "C"
+            },
+            {
+                id: 11, type: "MC", section: "2. KISIM: Çoktan Seçmeli Test",
+                text: "3. Bir fotoğrafın yapay zeka veya bilgisayar ile değiştirilip değiştirilmediğini anlamak için aşağıdakilerden hangisini incelemeliyiz?",
+                options: [
+                    { label: "A", text: "Fotoğraftaki garip detayları, ışıkları ve gölgeleri" },
+                    { label: "B", text: "Fotoğrafın sadece renklerinin canlı olup olmadığını" },
+                    { label: "C", text: "Fotoğraftaki insanların ne giydiğini" }
+                ],
+                answer: "A"
+            },
+            {
+                id: 12, type: "MC", section: "2. KISIM: Çoktan Seçmeli Test",
+                text: "4. Öğretmeni Efe'ye şüpheli bir görsel gösterdiğinde Efe'nin sorması gereken 3 altın sorudan biri aşağıdakilerden hangisi DEĞİLDİR?",
+                options: [
+                    { label: "A", text: "Bunu kim yarattı?" },
+                    { label: "B", text: "Bu resmi yapmak kaç liraya mal oldu?" },
+                    { label: "C", text: "Bunun doğru olup olmadığını nasıl anlayabilirim?" }
+                ],
+                answer: "B"
+            },
+            {
+                id: 13, type: "MC", section: "2. KISIM: Çoktan Seçmeli Test",
+                text: "5. \"Metinden Görsel Üretme\" (Prompt) nedir?",
+                options: [
+                    { label: "A", text: "Bilgisayara ne çizmesini istediğimizi yazılı talimat olarak söylemektir." },
+                    { label: "B", text: "Fotoğraf makinesiyle manzara resmi çekmektir." },
+                    { label: "C", text: "Resimleri kâğıttan makasla kesmektir." }
+                ],
+                answer: "A"
+            },
+            {
+                id: 14, type: "MC", section: "2. KISIM: Çoktan Seçmeli Test",
+                text: "6. Arkadaşınız size internette uçan bir araba fotoğrafı gösterdi ve \"Bak bu gerçek!\" dedi. Bir Dijital Dedektif olarak ne yapmalısınız?",
+                options: [
+                    { label: "A", text: "Hemen inanıp herkese haber vermeliyim." },
+                    { label: "B", text: "\"Resimler kolayca değiştirilebilir veya yapay zeka ile yapılabilir\" deyip kaynağını sorgulamalıyım." },
+                    { label: "C", text: "O fotoğrafı hemen sosyal medyada paylaşmalıyım." }
+                ],
+                answer: "B"
+            },
+            {
+                id: 15, type: "MC", section: "2. KISIM: Çoktan Seçmeli Test",
+                text: "7. İnsanlar fotoğrafları ve videoları meşhur veya farklı amaçlarla değiştirebilirler. Aşağıdakilerden hangisi bu amaçlardan biri OLAMAZ?",
+                options: [
+                    { label: "A", text: "Eğlenceli içerikler üretmek" },
+                    { label: "B", text: "Bir ürünü daha cazip gösterip ikna etmek" },
+                    { label: "C", text: "İnternetteki tüm bilgileri %100 doğru hale getirmek" }
+                ],
+                answer: "C"
+            }
+        ];
+
+        // --- 2. SEVİYE GÖRSEL YAPBOZ LİSTESİ ---
+        const puzzleGorselleri = [
+            { id: 1, baslik: "Pilot Baykuş 🦉✈️", url: "https://i.ibb.co/V1h8jCn/U-ak-kullanan-sevimli-bir-bayku-y-z-do-rudan-kar-ya-d-n-k-pilot-koltu-unda-elleri-kumandalarda.png" },
+            { id: 2, baslik: "Gözlüklü Papağan 🦜👓", url: "https://i.ibb.co/nqGs6bwb/G-zl-kl-k-tak-m-elbise-giymi-sevimli-bir-papa-an-kar-ya-d-n-k-kendinden-emin-ve-ne-eli-ifade.png" },
+            { id: 3, baslik: "Şoför Köpek 🐶🚗", url: "https://i.ibb.co/fzM2ssLs/Y-z-do-rudan-kar-ya-bakan-sevimli-bir-k-pek-araba-kullan-yor-k-pek-direksiyonun-arkas-nda-renkli.png" },
+            { id: 4, baslik: "Futbolcu Zürafa 🦒⚽", url: "https://i.ibb.co/zH2X96fr/Top-oynayan-sevimli-bir-z-rafa-geni-g-ne-li-bir-Afrika-savan-nda-renkli-bir-futbol-topunu-ne-eyl.png" },
+            { id: 5, baslik: "Müzisyen Rakun 🦝🎸", url: "https://i.ibb.co/DH3CwFvJ/Gitar-alan-sevimli-bir-rakun-gece-vakti-s-cak-klarla-ayd-nlat-lm-samimi-bir-orman-a-kl-nda.png" }
+        ];
+
+        // --- 1. SEVİYE FOTOĞRAF VERİLERİ ---
+        const photosData = [
+            {
+                id: 1, title: "1. Doğa Manzarası 🌲",
+                url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
+                initial: { brightness: 30, contrast: 30, saturate: 20 },
+                target: { brightness: 100, contrast: 110, saturate: 110 }, tolerance: 25
+            },
+            {
+                id: 2, title: "2. Lezzetli Restoran 🍕",
+                url: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80",
+                initial: { brightness: 35, contrast: 40, saturate: 15 },
+                target: { brightness: 105, contrast: 100, saturate: 120 }, tolerance: 25
+            },
+            {
+                id: 3, title: "3. Eğlenceli Lunapark 🎡",
+                url: "https://images.unsplash.com/photo-1513889961551-628c1e5e2ee9?auto=format&fit=crop&w=800&q=80",
+                initial: { brightness: 25, contrast: 30, saturate: 10 },
+                target: { brightness: 110, contrast: 105, saturate: 130 }, tolerance: 25
+            }
+        ];
+
+        let currentPhotoIndex = 0;
+        let isCurrentPhotoPassed = false;
+
+        // Bölüm Tamamlanma Durumları
+        const completedLevels = {
+            1: false,
+            2: false,
+            3: false,
+            4: false,
+            5: false
+        };
+
+        // Yapboz değişkenleri
+        let activePuzzleData = null;
+        let selectedPieceEl = null;
+        let puzzlePlacedCount = 0;
+        let hintTimeout = null;
+
+        // Dijital Dedektif Sınav Değişkenleri
+        let currentQuizIndex = 0;
+        let detectiveScore = 0;
+
+        // Zaman Makinesi (3. Bölüm) Değişkenleri
+        let currentTmIndex = 0;
+        let isTmRestored = false;
+        let isTmDragging = false;
+
+        // Sihirli Stil Atölyesi (5. Bölüm) Değişkenleri
+        let selectedStyleCharacter = null;
+        let hasTransformedAtLeastOnce = false;
+
+        // --- SEVİYE BAŞLATMA VE YÖNETİMİ ---
+        function startLevel(lvl) {
+            playSound('win');
+            if (lvl === 1) {
+                currentPhotoIndex = 0;
+                showScreen('game-screen');
+                loadPhoto(currentPhotoIndex);
+            } else if (lvl === 2) {
+                showScreen('puzzle-gallery-screen');
+                loadPuzzleGallery();
+            } else if (lvl === 3) {
+                currentTmIndex = 0;
+                showScreen('timemachine-screen');
+                loadTimeMachinePhoto(currentTmIndex);
+            } else if (lvl === 4) {
+                showScreen('style-workshop-screen');
+                initStyleWorkshop();
+            } else if (lvl === 5) {
+                showScreen('detective-screen');
+                startDetectiveQuiz();
+            }
+        }
+
+        // --- 5. SEVİYE: SİHİRLİ STİL ATÖLYESİ MANTIĞI ---
+        function initStyleWorkshop() {
+            hasTransformedAtLeastOnce = false;
+            document.getElementById('style-select-view').classList.remove('hidden');
+            document.getElementById('style-studio-view').classList.add('hidden');
+            document.getElementById('style-detective-box').classList.add('hidden');
+
+            const grid = document.getElementById('style-characters-grid');
+            grid.innerHTML = '';
+
+            styleCharacters.forEach(char => {
+                const card = document.createElement('div');
+                card.className = "bg-white/95 rounded-3xl p-4 border-4 border-fuchsia-300 hover:border-fuchsia-500 shadow-xl cursor-pointer hover:scale-105 transition-all flex flex-col items-center";
+                card.onclick = () => selectStyleCharacter(char);
+                card.innerHTML = `
+                    <div class="w-full aspect-square rounded-2xl overflow-hidden mb-3 border-2 border-slate-200 bg-slate-100">
+                        <img src="${char.images.original}" alt="${char.name}" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="font-extrabold text-slate-800 text-base sm:text-lg mb-3 text-center">${char.name}</h3>
+                    <button class="w-full bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-extrabold py-2.5 rounded-xl border-b-4 border-fuchsia-700 text-sm flex items-center justify-center gap-2 mt-auto">
+                        <i class="fa-solid fa-wand-sparkles"></i>
+                        <span>Karakteri Seç</span>
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function selectStyleCharacter(char) {
+            playSound('pop');
+            selectedStyleCharacter = char;
+
+            document.getElementById('style-select-view').classList.add('hidden');
+            document.getElementById('style-studio-view').classList.remove('hidden');
+
+            document.getElementById('style-active-char-name').innerText = char.name;
+            document.getElementById('style-preview-img').src = char.images.original;
+            document.getElementById('style-active-badge').innerText = "📷 Orijinal Hali";
+            document.getElementById('style-active-badge').className = "bg-sky-100 text-sky-900 border border-sky-300 text-xs font-extrabold px-2.5 py-0.5 rounded-full";
+        }
+
+        function backToStyleSelection() {
+            playSound('click');
+            document.getElementById('style-studio-view').classList.add('hidden');
+            document.getElementById('style-select-view').classList.remove('hidden');
+        }
+
+        function applyCharacterStyle(styleKey) {
+            if (!selectedStyleCharacter) return;
+            playSound('win');
+
+            const imgEl = document.getElementById('style-preview-img');
+            const scanBeam = document.getElementById('style-scan-beam');
+            const badgeEl = document.getElementById('style-active-badge');
+
+            // Sihirli tarama animasyonunu tetikle
+            scanBeam.classList.remove('hidden', 'magic-scan-active');
+            void scanBeam.offsetWidth; // Reflow
+            scanBeam.classList.add('magic-scan-active');
+
+            // Görseli ilgili stil eşleşmesine göre değiştir
+            imgEl.src = selectedStyleCharacter.images[styleKey];
+
+            const styleLabels = {
+                original: { text: "📷 Orijinal Hali", cls: "bg-sky-100 text-sky-900 border-sky-300" },
+                anime: { text: "🌸 Anime Karakteri", cls: "bg-pink-100 text-pink-900 border-pink-300" },
+                cartoon: { text: "🎬 Çizgi Film Karakteri", cls: "bg-amber-100 text-amber-900 border-amber-300" },
+                comic: { text: "💥 Çizgi Roman Karakteri", cls: "bg-purple-100 text-purple-900 border-purple-300" }
+            };
+
+            badgeEl.innerText = styleLabels[styleKey].text;
+            badgeEl.className = `${styleLabels[styleKey].cls} border text-xs font-extrabold px-2.5 py-0.5 rounded-full`;
+
+            // En az bir çizim stiline dönüştürüldüyse Dijital Dedektif bilgi kutusunu göster
+            if (styleKey !== 'original') {
+                confetti({ particleCount: 55, spread: 60, origin: { y: 0.65 } });
+                if (!hasTransformedAtLeastOnce) {
+                    hasTransformedAtLeastOnce = true;
+                    document.getElementById('style-detective-box').classList.remove('hidden');
+                }
+            }
+        }
+
+        function updateCertificateNamePreview() {
+            const nameVal = document.getElementById('detective-name-input').value.trim();
+            const previewEl = document.getElementById('certificate-live-greeting');
+            if (nameVal.length > 0) {
+                previewEl.innerText = `🏅 Tebrikler Usta Dedektif ${nameVal}! Tüm Rozetlerin Sahibi Oldun!`;
+                previewEl.classList.remove('hidden');
+            } else {
+                previewEl.classList.add('hidden');
+            }
+        }
+
+        // --- 4. SEVİYE: ZAMAN MAKİNESİ MANTIĞI ---
+        function loadTimeMachinePhoto(index) {
+            const data = timeMachinePhotos[index];
+            isTmRestored = false;
+
+            document.getElementById('tm-title').innerText = data.title;
+            document.getElementById('tm-img-before').src = data.url;
+            document.getElementById('tm-img-after').src = data.url;
+
+            document.getElementById('tm-success-overlay').classList.add('hidden');
+            document.getElementById('tm-next-btn').classList.add('hidden');
+            document.getElementById('tm-compare-container').classList.remove('photo-success-border');
+
+            // Adım göstergelerini güncelle
+            const stepContainer = document.getElementById('tm-step-indicators');
+            stepContainer.innerHTML = '';
+            timeMachinePhotos.forEach((_, idx) => {
+                const dot = document.createElement('div');
+                dot.className = `w-3.5 h-3.5 rounded-full transition-all ${idx === index ? 'bg-rose-500 scale-125' : (idx < index ? 'bg-emerald-500' : 'bg-slate-300')}`;
+                stepContainer.appendChild(dot);
+            });
+
+            // Kaydırıcıyı başlangıç pozisyonuna (%5) getir
+            updateTimeMachineSlider(5);
+        }
+
+        function updateTimeMachineSlider(percentage) {
+            const clamped = Math.max(0, Math.min(100, percentage));
+            const rightClip = 100 - clamped;
+
+            document.getElementById('tm-after-wrapper').style.clipPath = `inset(0 ${rightClip}% 0 0)`;
+            document.getElementById('tm-slider-handle').style.left = `${clamped}%`;
+            document.getElementById('tm-percent-text').innerText = `%${Math.round(clamped)}`;
+
+            // %97 ve üzerine çekildiğinde tam onarıldı kabul et
+            if (clamped >= 97 && !isTmRestored) {
+                isTmRestored = true;
+                isTmDragging = false;
+                document.getElementById('tm-after-wrapper').style.clipPath = `inset(0 0% 0 0)`;
+                document.getElementById('tm-slider-handle').style.left = `100%`;
+                document.getElementById('tm-percent-text').innerText = `%100`;
+
+                playSound('win');
+                confetti({ particleCount: 90, spread: 75, origin: { y: 0.6 } });
+
+                document.getElementById('tm-compare-container').classList.add('photo-success-border');
+                document.getElementById('tm-success-overlay').classList.remove('hidden');
+
+                const nextBtn = document.getElementById('tm-next-btn');
+                nextBtn.querySelector('span').innerText = currentTmIndex < timeMachinePhotos.length - 1 ? "Sonraki Fotoğrafa Geç" : "Bölümü Tamamla!";
+                nextBtn.classList.remove('hidden');
+            }
+        }
+
+        function handleTimeMachineMove(clientX) {
+            if (isTmRestored) return;
+            const container = document.getElementById('tm-compare-container');
+            const rect = container.getBoundingClientRect();
+            const relX = clientX - rect.left;
+            const pct = (relX / rect.width) * 100;
+            updateTimeMachineSlider(pct);
+        }
+
+        // Zaman Makinesi Fare ve Dokunmatik Olay Dinleyicileri
+        const tmContainer = document.getElementById('tm-compare-container');
+        tmContainer.addEventListener('mousedown', (e) => {
+            if (isTmRestored) return;
+            isTmDragging = true;
+            playSound('click');
+            handleTimeMachineMove(e.clientX);
+        });
+        window.addEventListener('mousemove', (e) => {
+            if (!isTmDragging) return;
+            handleTimeMachineMove(e.clientX);
+        });
+        window.addEventListener('mouseup', () => {
+            isTmDragging = false;
+        });
+
+        tmContainer.addEventListener('touchstart', (e) => {
+            if (isTmRestored) return;
+            isTmDragging = true;
+            playSound('click');
+            handleTimeMachineMove(e.touches[0].clientX);
+        }, { passive: true });
+        window.addEventListener('touchmove', (e) => {
+            if (!isTmDragging) return;
+            handleTimeMachineMove(e.touches[0].clientX);
+        }, { passive: true });
+        window.addEventListener('touchend', () => {
+            isTmDragging = false;
+        });
+
+        function nextTimeMachinePhoto() {
+            if (!isTmRestored) return;
+            playSound('pop');
+            currentTmIndex++;
+            if (currentTmIndex < timeMachinePhotos.length) {
+                loadTimeMachinePhoto(currentTmIndex);
+            } else {
+                showCompletionScreen(3);
+            }
+        }
+
+        // --- 1. SEVİYE: FOTOĞRAF EDİTÖRÜ MANTIĞI ---
+        function loadPhoto(index) {
+            const data = photosData[index];
+            isCurrentPhotoPassed = false;
+
+            document.getElementById('photo-title').innerText = data.title;
+            const imgEl = document.getElementById('editable-image');
+            imgEl.src = data.url;
+
+            // Kaydıraçları sıfırla
+            document.getElementById('brightness-slider').value = data.initial.brightness;
+            document.getElementById('contrast-slider').value = data.initial.contrast;
+            document.getElementById('saturate-slider').value = data.initial.saturate;
+
+            const photoFrame = document.getElementById('photo-frame');
+            photoFrame.classList.remove('photo-success-border');
+            document.getElementById('success-badge').classList.add('hidden');
+
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = true;
+            nextBtn.className = "w-full bg-gray-300 text-gray-500 font-extrabold py-3 rounded-2xl border-b-4 border-gray-400 cursor-not-allowed transition-all text-base sm:text-lg flex items-center justify-center gap-2 mt-1";
+
+            renderStepIndicators();
+            updateImageFilters();
+        }
+
+        function renderStepIndicators() {
+            const container = document.getElementById('step-indicators');
+            container.innerHTML = '';
+            photosData.forEach((_, idx) => {
+                const dot = document.createElement('div');
+                dot.className = `w-3 h-3 rounded-full ${idx === currentPhotoIndex ? 'bg-amber-500 scale-125' : 'bg-slate-300'}`;
+                container.appendChild(dot);
+            });
+        }
+
+        function updateImageFilters() {
+            const bVal = document.getElementById('brightness-slider').value;
+            const cVal = document.getElementById('contrast-slider').value;
+            const sVal = document.getElementById('saturate-slider').value;
+
+            document.getElementById('brightness-val').innerText = `${bVal}%`;
+            document.getElementById('contrast-val').innerText = `${cVal}%`;
+            document.getElementById('saturate-val').innerText = `${sVal}%`;
+
+            const imgEl = document.getElementById('editable-image');
+            imgEl.style.filter = `brightness(${bVal}%) contrast(${cVal}%) saturate(${sVal}%)`;
+
+            checkPhotoSuccess(bVal, cVal, sVal);
+        }
+
+        function checkPhotoSuccess(b, c, s) {
+            const target = photosData[currentPhotoIndex].target;
+            const tol = photosData[currentPhotoIndex].tolerance;
+
+            const bOk = Math.abs(b - target.brightness) <= tol;
+            const cOk = Math.abs(c - target.contrast) <= tol;
+            const sOk = Math.abs(s - target.saturate) <= tol;
+
+            if (bOk && cOk && sOk && !isCurrentPhotoPassed) {
+                isCurrentPhotoPassed = true;
+                playSound('win');
+                confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+
+                document.getElementById('photo-frame').classList.add('photo-success-border');
+                document.getElementById('success-badge').classList.remove('hidden');
+
+                const nextBtn = document.getElementById('next-btn');
+                nextBtn.disabled = false;
+                nextBtn.className = "w-full bg-green-500 hover:bg-green-600 text-white font-extrabold py-3 rounded-2xl border-b-4 border-green-700 active:border-b-0 cursor-pointer transition-all text-base sm:text-lg flex items-center justify-center gap-2 mt-1 shadow-lg animate-pulse-gentle";
+            }
+        }
+
+        function nextPhoto() {
+            if (!isCurrentPhotoPassed) return;
+            currentPhotoIndex++;
+            if (currentPhotoIndex < photosData.length) {
+                loadPhoto(currentPhotoIndex);
+            } else {
+                showCompletionScreen(1);
+            }
+        }
+
+        // --- 2. SEVİYE: YAPBOZ MANTIĞI ---
+        function loadPuzzleGallery() {
+            const grid = document.getElementById('puzzle-gallery-grid');
+            grid.innerHTML = '';
+            puzzleGorselleri.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white/95 rounded-3xl p-3 border-4 border-purple-300 hover:border-purple-500 shadow-xl cursor-pointer hover:scale-105 transition-all flex flex-col items-center";
+                card.onclick = () => selectPuzzleImage(item);
+                card.innerHTML = `
+                    <div class="w-full aspect-square rounded-2xl overflow-hidden mb-3 border-2 border-slate-200">
+                        <img src="${item.url}" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-base mb-2 text-center">${item.baslik}</h3>
+                    <button class="w-full bg-purple-500 text-white font-extrabold py-2 rounded-xl border-b-4 border-purple-700 text-sm">
+                        Oyna <i class="fa-solid fa-play ml-1"></i>
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function selectPuzzleImage(item) {
+            activePuzzleData = item;
+            document.getElementById('puzzle-active-title').innerText = item.baslik;
+            document.getElementById('puzzle-hint-img').src = item.url;
+            showScreen('puzzle-game-screen');
+            setupPuzzleBoard(item.url);
+        }
+
+        function togglePuzzleHint() {
+            playSound('pop');
+            const hintModal = document.getElementById('puzzle-hint-modal');
+            hintModal.classList.remove('hidden');
+
+            if (hintTimeout) clearTimeout(hintTimeout);
+            hintTimeout = setTimeout(() => {
+                hintModal.classList.add('hidden');
+            }, 2000);
+        }
+
+        function setupPuzzleBoard(imageUrl) {
+            puzzlePlacedCount = 0;
+            selectedPieceEl = null;
+
+            const pool = document.getElementById('puzzle-pieces-pool');
+            const board = document.getElementById('puzzle-board');
+            pool.innerHTML = '';
+            board.innerHTML = '';
+
+            const pieceIndices = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+            const shuffledIndices = [...pieceIndices].sort(() => Math.random() - 0.5);
+
+            shuffledIndices.forEach(idx => {
+                const piece = document.createElement('div');
+                piece.className = "w-full aspect-square bg-cover rounded-xl border-2 border-white shadow-md cursor-pointer transition-transform hover:scale-105";
+                piece.draggable = true;
+                piece.dataset.correctIdx = idx;
+
+                const row = Math.floor(idx / 3);
+                const col = idx % 3;
+                piece.style.backgroundImage = `url('${imageUrl}')`;
+                piece.style.backgroundSize = '300% 300%';
+                piece.style.backgroundPosition = `${col * 50}% ${row * 50}%`;
+
+                // Drag & Drop olayları
+                piece.ondragstart = (e) => {
+                    e.dataTransfer.setData('text/plain', idx);
+                    selectedPieceEl = piece;
+                };
+
+                // Tıklayarak seçme
+                piece.onclick = () => {
+                    playSound('click');
+                    document.querySelectorAll('#puzzle-pieces-pool div').forEach(el => el.classList.remove('ring-4', 'ring-purple-600'));
+                    selectedPieceEl = piece;
+                    piece.classList.add('ring-4', 'ring-purple-600');
+                };
+
+                pool.appendChild(piece);
+            });
+
+            // 3x3 Tahtasını Oluştur
+            for (let i = 0; i < 9; i++) {
+                const slot = document.createElement('div');
+                slot.className = "w-full h-full bg-slate-800/50 rounded-xl border-2 border-dashed border-slate-600 flex items-center justify-center relative overflow-hidden";
+                slot.dataset.slotIdx = i;
+
+                slot.ondragover = (e) => e.preventDefault();
+                slot.ondrop = (e) => {
+                    e.preventDefault();
+                    const pieceIdx = e.dataTransfer.getData('text/plain');
+                    attemptPlacePiece(slot, pieceIdx);
+                };
+
+                slot.onclick = () => {
+                    if (selectedPieceEl && !slot.hasChildNodes()) {
+                        attemptPlacePiece(slot, selectedPieceEl.dataset.correctIdx);
+                    }
+                };
+
+                board.appendChild(slot);
+            }
+        }
+
+        function attemptPlacePiece(slot, pieceIdx) {
+            const slotIdx = slot.dataset.slotIdx;
+            if (parseInt(slotIdx) === parseInt(pieceIdx)) {
+                // Doğru Yerleştirme
+                playSound('pop');
+                slot.innerHTML = '';
+                if (selectedPieceEl) {
+                    selectedPieceEl.classList.remove('ring-4', 'ring-purple-600');
+                    selectedPieceEl.draggable = false;
+                    selectedPieceEl.onclick = null;
+                    slot.appendChild(selectedPieceEl);
+                }
+
+                slot.className = "w-full h-full rounded-xl overflow-hidden border-2 border-green-400 shadow-md animate-pulse-gentle";
+                selectedPieceEl = null;
+                puzzlePlacedCount++;
+
+                if (puzzlePlacedCount === 9) {
+                    playSound('win');
+                    setTimeout(() => {
+                        showCompletionScreen(2);
+                    }, 400);
+                }
+            } else {
+                // Yanlış Yerleştirme
+                playSound('error');
+                slot.classList.add('animate-shake', 'border-red-500');
+                setTimeout(() => {
+                    slot.classList.remove('animate-shake', 'border-red-500');
+                }, 400);
+            }
+        }
+
+        // --- 3. SEVİYE: DİJİTAL DEDEKTİF TEST MANTIĞI ---
+        function startDetectiveQuiz() {
+            currentQuizIndex = 0;
+            detectiveScore = 0;
+            document.getElementById('detective-score').innerText = '0 Rozet';
+            loadQuizQuestion(currentQuizIndex);
+        }
+
+        function loadQuizQuestion(index) {
+            const q = detectiveQuestions[index];
+            const feedbackEl = document.getElementById('quiz-feedback');
+            feedbackEl.classList.add('hidden');
+
+            document.getElementById('quiz-progress-text').innerText = `Soru ${index + 1} / ${detectiveQuestions.length}`;
+            const pct = ((index + 1) / detectiveQuestions.length) * 100;
+            document.getElementById('quiz-progress-bar').style.width = `${pct}%`;
+
+            document.getElementById('quiz-section-title').innerText = q.section;
+            document.getElementById('quiz-question-text').innerText = q.text;
+
+            const container = document.getElementById('quiz-options-container');
+            container.innerHTML = '';
+
+            if (q.type === "DY") {
+                container.className = "grid grid-cols-2 gap-4";
+
+                const btnD = document.createElement('button');
+                btnD.className = "bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-lg py-4 rounded-2xl border-b-4 border-emerald-700 active:border-b-0 shadow-lg transition flex items-center justify-center gap-2";
+                btnD.innerHTML = `<i class="fa-solid fa-check"></i> Doğru (D)`;
+                btnD.onclick = () => checkQuizAnswer("D");
+
+                const btnY = document.createElement('button');
+                btnY.className = "bg-rose-500 hover:bg-rose-600 text-white font-extrabold text-lg py-4 rounded-2xl border-b-4 border-rose-700 active:border-b-0 shadow-lg transition flex items-center justify-center gap-2";
+                btnY.innerHTML = `<i class="fa-solid fa-xmark"></i> Yanlış (Y)`;
+                btnY.onclick = () => checkQuizAnswer("Y");
+
+                container.appendChild(btnD);
+                container.appendChild(btnY);
+            } else if (q.type === "MC") {
+                container.className = "grid grid-cols-1 gap-3";
+                q.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = "bg-sky-100 hover:bg-sky-200 text-sky-950 font-bold text-left p-3.5 rounded-2xl border-2 border-sky-300 transition flex items-center gap-3 shadow-sm";
+                    btn.innerHTML = `<span class="w-8 h-8 rounded-xl bg-sky-500 text-white font-extrabold flex items-center justify-center text-sm shrink-0">${opt.label}</span> <span>${opt.text}</span>`;
+                    btn.onclick = () => checkQuizAnswer(opt.label);
+                    container.appendChild(btn);
+                });
+            }
+        }
+
+        function checkQuizAnswer(userAnswer) {
+            const q = detectiveQuestions[currentQuizIndex];
+            const feedbackEl = document.getElementById('quiz-feedback');
+
+            if (userAnswer === q.answer) {
+                // Doğru Cevap
+                playSound('win');
+                detectiveScore += 10;
+                document.getElementById('detective-score').innerText = `${detectiveScore} Rozet`;
+
+                // Rozet Konfeti Efekti
+                confetti({ particleCount: 50, spread: 50, origin: { y: 0.6 } });
+
+                currentQuizIndex++;
+                if (currentQuizIndex < detectiveQuestions.length) {
+                    loadQuizQuestion(currentQuizIndex);
+                } else {
+                    // Test Tamamlandı
+                    document.getElementById('quiz-progress-bar').style.width = '100%';
+                    setTimeout(() => {
+                        showCompletionScreen(5);
+                    }, 500);
+                }
+            } else {
+                // Yanlış Cevap
+                playSound('error');
+                feedbackEl.className = "p-3 mb-4 rounded-xl text-sm font-bold text-center bg-rose-100 text-rose-900 border-2 border-rose-300 animate-shake";
+                feedbackEl.innerHTML = "Bir daha düşün! Dijital dedektifler detayları inceler 🕵️‍♂️";
+                feedbackEl.classList.remove('hidden');
+            }
+        }
+
+        // --- BÖLÜM SONU BAŞARI EKRANI YÖNETİMİ ---
+        function showCompletionScreen(level) {
+            completedLevels[level] = true;
+            showScreen('completion-screen');
+
+            const icon = document.getElementById('completion-icon');
+            const title = document.getElementById('completion-title');
+            const desc = document.getElementById('completion-desc');
+            const replayBtn = document.getElementById('completion-replay-btn');
+            const certBox = document.getElementById('certificate-box');
+            const certBadgeTitle = document.getElementById('certificate-badge-title');
+            const certEarnedBadges = document.getElementById('certificate-earned-badges');
+
+            certBox.classList.add('hidden');
+            certEarnedBadges.innerHTML = '';
+
+            if (level === 1) {
+                icon.innerText = "🏆";
+                title.innerText = "MUHTEŞEMSİN! 🎉";
+                desc.innerText = "1. Seviyeyi Başarıyla Tamamladın! Tüm fotoğraflar harika görünüyor!";
+                replayBtn.onclick = () => startLevel(1);
+            } else if (level === 2) {
+                icon.innerText = "🧩";
+                title.innerText = "TEBRİKLER! 🧩✨";
+                desc.innerText = `Harika bir iş! "${activePuzzleData.baslik}" yapbozunu başardın!`;
+                replayBtn.onclick = () => showScreen('puzzle-gallery-screen');
+            } else if (level === 3) {
+                icon.innerText = "⏳";
+                title.innerText = "ZAMAN USTASI OLDUN! 🌟";
+                desc.innerText = "TEBRİKLER! 3. BÖLÜM ROZETİNİ KAZANDIN VE TÜM ESKİ FOTOĞRAFLARI CANLANDIRDIN! 🎨✨";
+                replayBtn.onclick = () => startLevel(3);
+
+                confetti({ particleCount: 200, spread: 100, origin: { y: 0.4 } });
+            } else if (level === 4) {
+                icon.innerText = "🎨";
+                title.innerText = "STİL SİHİRBAZI OLDUN! 🌟";
+                desc.innerText = "TEBRİKLER! 4. BÖLÜM ROZETİNİ KAZANDIN VE KARAKTERLERİ HARİKA ÇİZİMLERE DÖNÜŞTÜRDÜN! 🎨✨";
+                replayBtn.onclick = () => startLevel(4);
+
+                confetti({ particleCount: 200, spread: 100, origin: { y: 0.4 } });
+            } else if (level === 5) {
+                icon.innerText = "🔍";
+                title.innerText = "USTA DİJİTAL DEDEKTİF! 🏆";
+                desc.innerText = "TEBRİKLER! TÜM DEDEKTİFLİK SINAVINI GEÇTİN VE USTA DİJİTAL DEDEKTİF ROZETİNİ KAZANDIN! 🕵️‍♂️✨";
+                certBadgeTitle.innerText = "🏅 USTA DİJİTAL DEDEKTİF SERTİFİKASI";
+
+                const allBadges = [
+                    "✨ Fotoğraf Ustası",
+                    "🧩 Yapboz Kahramanı",
+                    "⏳ Zaman Yolcusu",
+                    "🎨 Stil Sihirbazı",
+                    "🔍 Usta Dijital Dedektif"
+                ];
+                allBadges.forEach(b => {
+                    const span = document.createElement('span');
+                    span.className = "bg-emerald-100 text-emerald-900 border border-emerald-300 px-2 py-0.5 rounded-full";
+                    span.innerText = b;
+                    certEarnedBadges.appendChild(span);
+                });
+
+                certBox.classList.remove('hidden');
+                updateCertificateNamePreview();
+                replayBtn.onclick = () => startLevel(5);
+
+                confetti({ particleCount: 250, spread: 110, origin: { y: 0.4 } });
+            }
+        }
+
+    </script>
+</body>
+</html>
