@@ -146,7 +146,7 @@
             box-shadow: 0 0 25px #22c55e !important;
         }
 
-        /* 4. Bölüm: Zaman Makinesi Önce / Sonra Karşılaştırma Kaydırıcısı */
+        /* Zaman Makinesi Önce / Sonra Karşılaştırma Kaydırıcısı */
         .vintage-scratches {
             background-image: 
                 repeating-linear-gradient(90deg, rgba(255,255,255,0.08) 0px, rgba(255,255,255,0.08) 1px, transparent 1px, transparent 35px),
@@ -164,7 +164,14 @@
             z-index: 0;
         }
 
-        /* 5. Bölüm: Sihirli Stil Atölyesi Tarama Efekti */
+        .floating-icon {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.14);
+            animation: floatIcon linear infinite;
+            bottom: -10vh;
+        }
+
+        /* Sihirli Stil Atölyesi Tarama Efekti */
         @keyframes magicScanLine {
             0% { top: 0%; opacity: 0; }
             15% { opacity: 1; }
@@ -178,17 +185,17 @@
 
         @keyframes floatIcon {
             0% {
-                transform: translateY(110vh) rotate(0deg) scale(0.8);
+                transform: translateY(10vh) rotate(0deg) scale(0.8);
                 opacity: 0;
             }
             15% {
-                opacity: 0.6;
+                opacity: 0.7;
             }
             85% {
-                opacity: 0.6;
+                opacity: 0.7;
             }
             100% {
-                transform: translateY(-10vh) rotate(360deg) scale(1.1);
+                transform: translateY(-115vh) rotate(360deg) scale(1.1);
                 opacity: 0;
             }
         }
@@ -227,16 +234,29 @@
                         </span>
                     </div>
 
-                    <!-- Ana Sayfa Butonu -->
-                    <button onclick="showScreen('home-screen')" class="bg-rose-500 hover:bg-rose-600 text-white px-3 py-1 sm:px-4 sm:py-1.5 rounded-xl font-bold border-b-4 border-rose-700 active:translate-y-1 active:border-b-0 transition flex items-center gap-2 text-sm sm:text-base shadow-lg">
-                        <i class="fa-solid fa-house"></i>
-                        <span>Ana Sayfa</span>
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <!-- Ses Aç/Kapat Butonu (Yeni Özellik) -->
+                        <button id="sound-toggle-btn" onclick="toggleSound()" title="Sesi Aç / Kapat" class="bg-amber-200 hover:bg-amber-100 text-amber-950 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl font-bold border-b-4 border-amber-600 active:translate-y-1 active:border-b-0 transition flex items-center gap-1.5 text-sm shadow">
+                            <i id="sound-icon" class="fa-solid fa-volume-high"></i>
+                        </button>
+
+                        <!-- Harita Hızlı Geçiş Butonu (Yeni Özellik) -->
+                        <button onclick="showScreen('map-screen')" class="bg-sky-500 hover:bg-sky-600 text-white px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-xl font-bold border-b-4 border-sky-700 active:translate-y-1 active:border-b-0 transition flex items-center gap-1.5 text-sm sm:text-base shadow-lg">
+                            <i class="fa-solid fa-map"></i>
+                            <span class="hidden sm:inline">Bölümler</span>
+                        </button>
+
+                        <!-- Ana Sayfa Butonu -->
+                        <button onclick="showScreen('home-screen')" class="bg-rose-500 hover:bg-rose-600 text-white px-3 py-1 sm:px-4 sm:py-1.5 rounded-xl font-bold border-b-4 border-rose-700 active:translate-y-1 active:border-b-0 transition flex items-center gap-2 text-sm sm:text-base shadow-lg">
+                            <i class="fa-solid fa-house"></i>
+                            <span>Ana Sayfa</span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- EKRAN 1: ANA SAYFA / AÇILIŞ EKRANI -->
                 <div id="home-screen" class="screen-view flex-1 flex flex-col items-center justify-center p-6 text-center z-10">
-                    <div class="bg-white/90 backdrop-blur-md p-6 sm:p-10 rounded-3xl border-4 border-sky-400 max-w-xl shadow-2xl animate-pulse-gentle">
+                    <div class="bg-white/95 backdrop-blur-md p-6 sm:p-10 rounded-3xl border-4 border-sky-400 max-w-xl shadow-2xl animate-pulse-gentle">
                         <div class="w-24 h-24 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-amber-400 shadow-md">
                             <i class="fa-solid fa-laptop-code text-5xl text-amber-500"></i>
                         </div>
@@ -248,22 +268,28 @@
                         </p>
                         <button onclick="showScreen('map-screen')" class="bg-green-500 hover:bg-green-600 text-white text-xl sm:text-2xl font-extrabold px-8 py-4 rounded-2xl border-b-8 border-green-700 active:translate-y-2 active:border-b-0 transition-all shadow-xl flex items-center justify-center gap-3 mx-auto">
                             <i class="fa-solid fa-play"></i>
-                            <span>ETKİNLİĞE BAŞLA!</span>
+                            <span>ETKİNLİĞE BAŞLA</span>
                         </button>
                     </div>
                 </div>
 
                 <!-- EKRAN 2: BÖLÜM SEÇİMİ / HARİTA -->
                 <div id="map-screen" class="screen-view hidden flex-1 flex flex-col items-center justify-center p-6 z-10 overflow-y-auto">
-                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white drop-shadow-[0_3px_3px_rgba(0,0,0,0.4)] mb-6 flex items-center gap-3">
-                        <i class="fa-solid fa-map-location-dot text-amber-300"></i> Bölümünü Seç!
-                    </h2>
+                    <div class="flex flex-col items-center mb-6">
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white drop-shadow-[0_3px_3px_rgba(0,0,0,0.4)] mb-2 flex items-center gap-3">
+                            <i class="fa-solid fa-map-location-dot text-amber-300"></i> Bölümünü Seç!
+                        </h2>
+                        <!-- Genel İlerleme Sayacı (Yeni Özellik) -->
+                        <div class="bg-white/90 px-4 py-1.5 rounded-full border-2 border-amber-400 text-amber-950 font-extrabold text-xs sm:text-sm shadow">
+                            🏅 Tamamlanan Görevler: <span id="total-completed-count" class="text-emerald-600">0 / 5</span>
+                        </div>
+                    </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 w-full max-w-5xl pt-2">
                         
                         <!-- 1. Bölüm -->
                         <div onclick="startLevel(1)" class="bg-white rounded-3xl border-4 border-amber-400 p-4 flex flex-col items-center shadow-xl cursor-pointer hover:scale-105 transition-all group relative pt-7">
-                            <div id="badge-level-1" class="absolute -top-3 -right-2 bg-emerald-500 text-white font-bold text-xs px-3 py-1.5 rounded-full shadow-md z-10 border-2 border-white">
+                            <div id="badge-level-1" class="absolute -top-3 -right-2 bg-sky-500 text-white font-bold text-xs px-3 py-1.5 rounded-full shadow-md z-10 border-2 border-white">
                                 OYNANABİLİR
                             </div>
                             <div class="w-14 h-14 bg-amber-100 rounded-2xl flex items-center justify-center mb-3 group-hover:rotate-6 transition-transform">
@@ -278,14 +304,14 @@
 
                         <!-- 2. Bölüm -->
                         <div onclick="startLevel(2)" class="bg-white rounded-3xl border-4 border-purple-400 p-4 flex flex-col items-center shadow-xl cursor-pointer hover:scale-105 transition-all group relative pt-7">
-                            <div id="badge-level-2" class="absolute -top-3 -right-2 bg-emerald-500 text-white font-bold text-xs px-3 py-1.5 rounded-full shadow-md z-10 border-2 border-white">
+                            <div id="badge-level-2" class="absolute -top-3 -right-2 bg-sky-500 text-white font-bold text-xs px-3 py-1.5 rounded-full shadow-md z-10 border-2 border-white">
                                 OYNANABİLİR
                             </div>
                             <div class="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center mb-3 group-hover:-rotate-6 transition-transform">
                                 <i class="fa-solid fa-puzzle-piece text-2xl text-purple-600"></i>
                             </div>
                             <h3 class="text-base font-bold text-gray-800 mb-1">2. Bölüm</h3>
-                            <p class="text-purple-600 font-semibold mb-4 text-center text-xs">Yapay Zeka Yapbozu</p>
+                            <p class="text-purple-600 font-semibold mb-4 text-center text-xs">Yapay Zekâ Yapbozu</p>
                             <button class="w-full bg-purple-400 group-hover:bg-purple-500 text-purple-950 font-bold py-2 rounded-xl border-b-4 border-purple-600 active:border-b-0 text-xs sm:text-sm mt-auto">
                                 Başla! <i class="fa-solid fa-arrow-right ml-1"></i>
                             </button>
@@ -293,7 +319,7 @@
 
                         <!-- 3. Bölüm (Zaman Makinesi) -->
                         <div onclick="startLevel(3)" class="bg-white rounded-3xl border-4 border-rose-400 p-4 flex flex-col items-center shadow-xl cursor-pointer hover:scale-105 transition-all group relative pt-7">
-                            <div id="badge-level-3" class="absolute -top-3 -right-2 bg-emerald-500 text-white font-bold text-xs px-3 py-1.5 rounded-full shadow-md z-10 border-2 border-white">
+                            <div id="badge-level-3" class="absolute -top-3 -right-2 bg-sky-500 text-white font-bold text-xs px-3 py-1.5 rounded-full shadow-md z-10 border-2 border-white">
                                 OYNANABİLİR
                             </div>
                             <div class="w-14 h-14 bg-rose-100 rounded-2xl flex items-center justify-center mb-3 group-hover:-rotate-6 transition-transform">
@@ -308,7 +334,7 @@
 
                         <!-- 4. Bölüm (Sihirli Stil Atölyesi) -->
                         <div onclick="startLevel(4)" class="bg-white rounded-3xl border-4 border-fuchsia-400 p-4 flex flex-col items-center shadow-xl cursor-pointer hover:scale-105 transition-all group relative pt-7">
-                            <div id="badge-level-4" class="absolute -top-3 -right-2 bg-emerald-500 text-white font-bold text-xs px-3 py-1.5 rounded-full shadow-md z-10 border-2 border-white">
+                            <div id="badge-level-4" class="absolute -top-3 -right-2 bg-sky-500 text-white font-bold text-xs px-3 py-1.5 rounded-full shadow-md z-10 border-2 border-white">
                                 OYNANABİLİR
                             </div>
                             <div class="w-14 h-14 bg-fuchsia-100 rounded-2xl flex items-center justify-center mb-3 group-hover:rotate-6 transition-transform">
@@ -323,7 +349,7 @@
 
                         <!-- 5. Bölüm (Dijital Dedektif) -->
                         <div onclick="startLevel(5)" class="bg-white rounded-3xl border-4 border-teal-400 p-4 flex flex-col items-center shadow-xl cursor-pointer hover:scale-105 transition-all group relative pt-7">
-                            <div id="badge-level-5" class="absolute -top-3 -right-2 bg-emerald-500 text-white font-bold text-xs px-3 py-1.5 rounded-full shadow-md z-10 border-2 border-white">
+                            <div id="badge-level-5" class="absolute -top-3 -right-2 bg-sky-500 text-white font-bold text-xs px-3 py-1.5 rounded-full shadow-md z-10 border-2 border-white">
                                 OYNANABİLİR
                             </div>
                             <div class="w-14 h-14 bg-teal-100 rounded-2xl flex items-center justify-center mb-3 group-hover:rotate-6 transition-transform">
@@ -341,7 +367,7 @@
 
                 <!-- EKRAN 3: 1. SEVİYE - FOTOĞRAF EDİTÖRÜ -->
                 <div id="game-screen" class="screen-view hidden flex-1 flex flex-col p-4 sm:p-6 z-10">
-                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4 bg-white/80 backdrop-blur p-3 rounded-2xl border-2 border-amber-300">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4 bg-white/85 backdrop-blur p-3 rounded-2xl border-2 border-amber-300">
                         <div class="flex items-center gap-2">
                             <span class="bg-amber-500 text-white font-bold px-3 py-1 rounded-xl text-xs sm:text-sm shadow">
                                 Bölüm 1
@@ -356,7 +382,7 @@
                     <div class="flex-1 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
                         <div class="md:col-span-7 flex flex-col items-center justify-center">
                             <div id="photo-frame" class="photo-container relative rounded-3xl overflow-hidden bg-slate-900 border-4 border-white w-full max-w-md aspect-[4/3] flex items-center justify-center">
-                                <img id="editable-image" src="" alt="Düzenlenecek Görsel" class="w-full h-full object-cover transition-all duration-150">
+                                <img id="editable-image" src="" alt="Düzenlenecek Görsel" onerror="this.src='https://placehold.co/800x600/38bdf8/ffffff?text=Gorsel+Yuklendi'" class="w-full h-full object-cover transition-all duration-150">
                                 <div id="success-badge" class="hidden absolute inset-0 bg-black/40 backdrop-blur-sm flex flex-col items-center justify-center text-white text-center p-4 animate-bounce-short">
                                     <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-3xl shadow-lg mb-2">✨</div>
                                     <span class="text-2xl font-extrabold text-yellow-300 drop-shadow">HARİKA İŞ!</span>
@@ -365,10 +391,15 @@
                             </div>
                         </div>
 
-                        <div class="md:col-span-5 bg-white/90 backdrop-blur-md p-4 sm:p-5 rounded-3xl border-4 border-amber-300 shadow-xl flex flex-col gap-4">
-                            <h3 class="text-amber-950 font-bold text-base border-b-2 border-amber-200 pb-2 flex items-center gap-2">
-                                <i class="fa-solid fa-sliders text-amber-500"></i> Sihirli Ayarlar
-                            </h3>
+                        <div class="md:col-span-5 bg-white/95 backdrop-blur-md p-4 sm:p-5 rounded-3xl border-4 border-amber-300 shadow-xl flex flex-col gap-4">
+                            <div class="flex items-center justify-between border-b-2 border-amber-200 pb-2">
+                                <h3 class="text-amber-950 font-bold text-base flex items-center gap-2">
+                                    <i class="fa-solid fa-sliders text-amber-500"></i> Sihirli Ayarlar
+                                </h3>
+                                <button onclick="resetCurrentPhotoFilters()" class="text-xs font-bold bg-amber-100 hover:bg-amber-200 text-amber-900 px-2.5 py-1 rounded-lg transition">
+                                    <i class="fa-solid fa-rotate-left"></i> Sıfırla
+                                </button>
+                            </div>
                             <div>
                                 <div class="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-700 mb-1">
                                     <span class="flex items-center gap-1.5"><i class="fa-solid fa-sun text-amber-500"></i> Parlaklık</span>
@@ -424,7 +455,7 @@
                         </div>
                     </div>
 
-                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3 bg-white/80 backdrop-blur p-2.5 rounded-2xl border-2 border-purple-300">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3 bg-white/85 backdrop-blur p-2.5 rounded-2xl border-2 border-purple-300">
                         <div class="flex items-center gap-2">
                             <span class="bg-purple-600 text-white font-bold px-3 py-1 rounded-xl text-xs sm:text-sm">Bölüm 2</span>
                             <h2 id="puzzle-active-title" class="font-bold text-purple-950 text-sm sm:text-base">Pilot Baykuş</h2>
@@ -440,7 +471,7 @@
                         </div>
                     </div>
                     <div class="flex-1 grid grid-cols-1 md:grid-cols-12 gap-4 items-center justify-center">
-                        <div class="md:col-span-5 bg-white/85 backdrop-blur-md p-3 sm:p-4 rounded-3xl border-4 border-purple-300 shadow-xl flex flex-col items-center">
+                        <div class="md:col-span-5 bg-white/90 backdrop-blur-md p-3 sm:p-4 rounded-3xl border-4 border-purple-300 shadow-xl flex flex-col items-center">
                             <h3 class="text-purple-950 font-bold text-sm mb-2 flex items-center gap-1.5">
                                 <i class="fa-solid fa-cubes text-purple-600"></i> Karışık Parçalar
                             </h3>
@@ -592,7 +623,7 @@
                                 4. Bölüm: Sihirli Stil Atölyesi 🎨
                             </span>
                             <h2 class="text-lg sm:text-2xl font-extrabold text-fuchsia-950">
-                                Bir fotoğraf seç ve yapay zeka ile onu çizgi film kahramanına dönüştür!
+                                Bir fotoğraf seç ve yapay zekâ ile onu çizgi film kahramanına dönüştür!
                             </h2>
                         </div>
 
@@ -626,7 +657,7 @@
                             <div id="style-scan-beam" class="hidden absolute left-0 right-0 h-3 bg-gradient-to-r from-transparent via-fuchsia-400 to-transparent shadow-[0_0_20px_#e879f9] z-20 pointer-events-none"></div>
                         </div>
 
-                        <!-- 4 Adet Etkileşimli Yapay Zeka Stil Butonu -->
+                        <!-- 4 Adet Etkileşimli Yapay Zekâ Stil Butonu -->
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full max-w-3xl">
                             <button id="btn-style-original" onclick="applyCharacterStyle('original')" class="style-filter-btn bg-sky-500 hover:bg-sky-600 text-white font-extrabold py-2.5 px-3 rounded-2xl border-b-4 border-sky-700 active:border-b-0 shadow-md text-xs sm:text-sm flex items-center justify-center gap-1.5 transition">
                                 <span>📷</span>
@@ -646,12 +677,12 @@
                             </button>
                         </div>
 
-                        <!-- Dijital Dedektif Bilgi Kutusu ve Bölüm Tamamlama Butonu (En az bir dönüşüm yapıldığında belirir) -->
+                        <!-- Dijital Dedektif Bilgi Kutusu ve Bölüm Tamamlama Butonu -->
                         <div id="style-detective-box" class="hidden w-full max-w-3xl bg-white/95 backdrop-blur-md p-3.5 rounded-2xl border-4 border-emerald-400 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-3 animate-pulse-gentle">
                             <div class="flex items-start gap-2.5 text-left">
                                 <span class="text-2xl shrink-0">🕵️‍♂️</span>
                                 <p class="text-xs sm:text-sm font-bold text-slate-800 leading-snug">
-                                    Harika! Yapay zeka gerçek bir fotoğrafı saniyeler içinde bambaşka bir çizim stiline dönüştürdü. Artık bu resim gerçek bir fotoğraf değil, yapay zeka ile değiştirilmiş (alter edilmiş) bir görseldir!
+                                    Harika! Yapay zekâ gerçek bir fotoğrafı saniyeler içinde bambaşka bir çizim stiline dönüştürdü. Artık bu resim gerçek bir fotoğraf değil, yapay zekâ ile değiştirilmiş (alter edilmiş) bir görseldir!
                                 </p>
                             </div>
                             <button onclick="showCompletionScreen(4)" class="shrink-0 bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold px-4 py-2.5 rounded-xl border-b-4 border-emerald-700 active:border-b-0 shadow-lg text-xs sm:text-sm flex items-center gap-1.5">
@@ -676,7 +707,7 @@
                             Bölümü Başarıyla Tamamladın!
                         </p>
 
-                        <!-- Sertifika Alanı (Final Bölümlerinde Görünür) -->
+                        <!-- Sertifika Alanı -->
                         <div id="certificate-box" class="hidden bg-amber-50 p-4 rounded-2xl border-2 border-dashed border-amber-400 mb-5 text-left">
                             <div class="text-center mb-2">
                                 <span id="certificate-badge-title" class="bg-amber-400 text-amber-950 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
@@ -690,8 +721,14 @@
                                 <!-- Kazanılan rozetler JS ile gösterilir -->
                             </div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Dedektifin Adı ve Soyadı:</label>
-                            <input type="text" id="detective-name-input" placeholder="Adını buraya yaz..." oninput="updateCertificateNamePreview()" class="w-full p-2 text-sm rounded-xl border-2 border-amber-300 font-bold focus:outline-none focus:border-amber-500 bg-white">
-                            <p id="certificate-live-greeting" class="hidden text-center text-xs font-extrabold text-emerald-700 mt-2"></p>
+                            <input type="text" id="detective-name-input" placeholder="Adını buraya yaz..." oninput="updateCertificateNamePreview()" class="w-full p-2 text-sm rounded-xl border-2 border-amber-300 font-bold focus:outline-none focus:border-amber-500 bg-white mb-2">
+                            <p id="certificate-live-greeting" class="hidden text-center text-xs font-extrabold text-emerald-700 mb-2"></p>
+                            
+                            <!-- Sertifika İndir Butonu (Yeni Özellik) -->
+                            <button onclick="downloadCertificate()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold py-2 rounded-xl border-b-4 border-indigo-800 active:border-b-0 transition text-xs sm:text-sm flex items-center justify-center gap-2 shadow">
+                                <i class="fa-solid fa-download"></i>
+                                <span>Sertifikamı Resim Olarak İndir!</span>
+                            </button>
                         </div>
 
                         <div class="flex flex-col sm:flex-row gap-3 justify-center">
@@ -709,9 +746,9 @@
 
                 <!-- Masaüstü Başlat Çubuğu (Bottom Bar) -->
                 <div class="bg-sky-900/90 backdrop-blur px-4 py-2 flex items-center justify-center border-t-2 border-sky-700 text-white text-xs sm:text-sm z-20">
-                    <!-- Bilfen Logo Area (Ortalanmış) -->
                     <div class="bg-white/95 px-4 py-1 rounded-xl shadow flex items-center justify-center">
-                        <img src="https://i.ibb.co/XkjKh6hx/Bilfen-Logo.png" alt="Bilfen Logosu" class="h-6 sm:h-7 object-contain">
+                        <img src="https://i.ibb.co/XkjKh6hx/Bilfen-Logo.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';" alt="Bilfen Logosu" class="h-6 sm:h-7 object-contain">
+                        <span class="hidden text-sky-900 font-black tracking-wider text-sm">DİJİTAL STÜDYO</span>
                     </div>
                 </div>
 
@@ -726,53 +763,71 @@
 
     <!-- JAVASCRIPT OYUN MANTIĞI -->
     <script>
-        // Web Audio API Ses Oluşturucu
+        // Web Audio API Ses Oluşturucu ve Ses Kontrolü
+        let isSoundEnabled = true;
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playSound(type) {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
+
+        function toggleSound() {
+            isSoundEnabled = !isSoundEnabled;
+            const icon = document.getElementById('sound-icon');
+            if (isSoundEnabled) {
+                icon.className = 'fa-solid fa-volume-high';
+                playSound('pop');
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-rose-600';
             }
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
+        }
 
-            const now = audioCtx.currentTime;
+        function playSound(type) {
+            if (!isSoundEnabled) return;
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
 
-            if (type === 'click') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(400, now);
-                osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.linearRampToValueAtTime(0, now + 0.05);
-                osc.start(now);
-                osc.stop(now + 0.05);
-            } else if (type === 'pop') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(300, now);
-                osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
-                gain.gain.setValueAtTime(0.4, now);
-                gain.gain.linearRampToValueAtTime(0, now + 0.1);
-                osc.start(now);
-                osc.stop(now + 0.1);
-            } else if (type === 'win') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(523.25, now);
-                osc.frequency.setValueAtTime(659.25, now + 0.1);
-                osc.frequency.setValueAtTime(783.99, now + 0.2);
-                osc.frequency.setValueAtTime(1046.50, now + 0.3);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.linearRampToValueAtTime(0, now + 0.5);
-                osc.start(now);
-                osc.stop(now + 0.5);
-            } else if (type === 'error') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(180, now);
-                osc.frequency.setValueAtTime(120, now + 0.1);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.linearRampToValueAtTime(0, now + 0.25);
-                osc.start(now);
-                osc.stop(now + 0.25);
+                const now = audioCtx.currentTime;
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, now);
+                    osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'pop') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+                    gain.gain.setValueAtTime(0.35, now);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.1);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                } else if (type === 'win') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.1);
+                    osc.frequency.setValueAtTime(783.99, now + 0.2);
+                    osc.frequency.setValueAtTime(1046.50, now + 0.3);
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.5);
+                    osc.start(now);
+                    osc.stop(now + 0.5);
+                } else if (type === 'error') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(180, now);
+                    osc.frequency.setValueAtTime(120, now + 0.1);
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                }
+            } catch (e) {
+                console.warn("Ses oynatılamadı:", e);
             }
         }
 
@@ -787,10 +842,12 @@
         }
 
         function updateMapBadges() {
+            let count = 0;
             for (let i = 1; i <= 5; i++) {
                 const badge = document.getElementById(`badge-level-${i}`);
                 if (badge) {
                     if (completedLevels[i]) {
+                        count++;
                         badge.innerText = "TAMAMLANDI ✓";
                         badge.className = "absolute -top-3 -right-2 bg-emerald-600 text-white font-bold text-xs px-3 py-1.5 rounded-full shadow-md z-10 border-2 border-white";
                     } else {
@@ -799,9 +856,13 @@
                     }
                 }
             }
+            const countEl = document.getElementById('total-completed-count');
+            if (countEl) {
+                countEl.innerText = `${count} / 5`;
+            }
         }
 
-        // --- 5. SEVİYE: SİHİRLİ STİL ATÖLYESİ KARAKTER VERİLERİ ---
+        // --- 4. SEVİYE: SİHİRLİ STİL ATÖLYESİ KARAKTER VERİLERİ ---
         const styleCharacters = [
             {
                 id: 1,
@@ -835,7 +896,7 @@
             }
         ];
 
-        // --- 4. SEVİYE ZAMAN MAKİNESİ FOTOĞRAF VERİLERİ ---
+        // --- 3. SEVİYE ZAMAN MAKİNESİ FOTOĞRAF VERİLERİ ---
         const timeMachinePhotos = [
             {
                 id: 1,
@@ -854,19 +915,19 @@
             }
         ];
 
-        // --- 3. SEVİYE DİJİTAL DEDEKTİF SORU VERİLERİ ---
+        // --- 5. SEVİYE DİJİTAL DEDEKTİF SORU VERİLERİ ---
         const detectiveQuestions = [
-            // 🔵 1. KISIM: Doğru / Yanlış (8 Soru)
+            // 1. KISIM: Doğru / Yanlış (8 Soru)
             { id: 1, type: "DY", section: "1. KISIM: Doğru mu, Yanlış mı?", text: "1. İnternette gördüğümüz tüm fotoğraflar %100 gerçektir ve hemen inanabiliriz.", answer: "Y" },
             { id: 2, type: "DY", section: "1. KISIM: Doğru mu, Yanlış mı?", text: "2. Bir fotoğrafın görünüşünü bilgisayar veya dijital araçlarla değiştirmeye \"görseli değiştirmek\" (alter etmek) denir.", answer: "D" },
-            { id: 3, type: "DY", section: "1. KISIM: Doğru mu, Yanlış mı?", text: "3. Yapay zeka, daha önce hiç var olmamış sıfırdan yeni resimler oluşturabilir.", answer: "D" },
+            { id: 3, type: "DY", section: "1. KISIM: Doğru mu, Yanlış mı?", text: "3. Yapay zekâ, daha önce hiç var olmamış sıfırdan yeni resimler oluşturabilir.", answer: "D" },
             { id: 4, type: "DY", section: "1. KISIM: Doğru mu, Yanlış mı?", text: "4. İnsanlar fotoğrafları sadece eğlenmek veya şaka yapmak için değiştirirler; başka hiçbir nedeni yoktur.", answer: "Y" },
             { id: 5, type: "DY", section: "1. KISIM: Doğru mu, Yanlış mı?", text: "5. Eskiden sanatçılar resimleri değiştirmek için boya ve makas kullanırken, günümüzde bilgisayarlar saniyeler içinde yeni görüntüler oluşturabilir.", answer: "D" },
             { id: 6, type: "DY", section: "1. KISIM: Doğru mu, Yanlış mı?", text: "6. \"İkna etmek\", birini bir şeye inanmaya veya bir şey yapmaya razı etmeye çalışmaktır.", answer: "D" },
-            { id: 7, type: "DY", section: "1. KISIM: Doğru mu, Yanlış mı?", text: "7. Yapay zekaya \"Ayda futbol oynayan fil\" yazarsak, yapay zeka bunun gerçek bir fotoğrafını çekmek için uzaya gider.", answer: "Y" },
+            { id: 7, type: "DY", section: "1. KISIM: Doğru mu, Yanlış mı?", text: "7. Yapay zekâya \"Ayda futbol oynayan fil\" yazarsak, yapay zekâ bunun gerçek bir fotoğrafını çekmek için uzaya gider.", answer: "Y" },
             { id: 8, type: "DY", section: "1. KISIM: Doğru mu, Yanlış mı?", text: "8. Şüpheli bir resim gördüğümüzde kendimize \"Bu resmi kim yarattı ve neden yarattı?\" diye sormalıyız.", answer: "D" },
 
-            // 🔵 2. KISIM: Çoktan Seçmeli Sorular (7 Soru)
+            // 2. KISIM: Çoktan Seçmeli Sorular (7 Soru)
             {
                 id: 9, type: "MC", section: "2. KISIM: Çoktan Seçmeli Test",
                 text: "1. Bir alışveriş reklamında oyuncak ayı olduğundan çok daha devasa ve parıltılı görünmektedir. Bu fotoğrafın değiştirilme sebebi aşağıdakilerden hangisidir?",
@@ -879,7 +940,7 @@
             },
             {
                 id: 10, type: "MC", section: "2. KISIM: Çoktan Seçmeli Test",
-                text: "2. Aşağıdaki resimlerden hangisinin Yapay Zeka (AI) tarafından uydurulmuş olma ihtimali en yüksektir?",
+                text: "2. Aşağıdaki resimlerden hangisinin Yapay Zekâ (AI) tarafından üretilmiş olma ihtimali en yüksektir?",
                 options: [
                     { label: "A", text: "Parkta yürüyen bir köpek" },
                     { label: "B", text: "Sınıfta ders dinleyen öğrenciler" },
@@ -889,7 +950,7 @@
             },
             {
                 id: 11, type: "MC", section: "2. KISIM: Çoktan Seçmeli Test",
-                text: "3. Bir fotoğrafın yapay zeka veya bilgisayar ile değiştirilip değiştirilmediğini anlamak için aşağıdakilerden hangisini incelemeliyiz?",
+                text: "3. Bir fotoğrafın yapay zekâ veya bilgisayar ile değiştirilip değiştirilmediğini anlamak için aşağıdakilerden hangisini incelemeliyiz?",
                 options: [
                     { label: "A", text: "Fotoğraftaki garip detayları, ışıkları ve gölgeleri" },
                     { label: "B", text: "Fotoğrafın sadece renklerinin canlı olup olmadığını" },
@@ -922,7 +983,7 @@
                 text: "6. Arkadaşınız size internette uçan bir araba fotoğrafı gösterdi ve \"Bak bu gerçek!\" dedi. Bir Dijital Dedektif olarak ne yapmalısınız?",
                 options: [
                     { label: "A", text: "Hemen inanıp herkese haber vermeliyim." },
-                    { label: "B", text: "\"Resimler kolayca değiştirilebilir veya yapay zeka ile yapılabilir\" deyip kaynağını sorgulamalıyım." },
+                    { label: "B", text: "\"Resimler kolayca değiştirilebilir veya yapay zekâ ile yapılabilir\" deyip kaynağını sorgulamalıyım." },
                     { label: "C", text: "O fotoğrafı hemen sosyal medyada paylaşmalıyım." }
                 ],
                 answer: "B"
@@ -996,8 +1057,9 @@
         let currentTmIndex = 0;
         let isTmRestored = false;
         let isTmDragging = false;
+        let tmRevealTimeout = null;
 
-        // Sihirli Stil Atölyesi (5. Bölüm) Değişkenleri
+        // Sihirli Stil Atölyesi (4. Bölüm) Değişkenleri
         let selectedStyleCharacter = null;
         let hasTransformedAtLeastOnce = false;
 
@@ -1024,7 +1086,7 @@
             }
         }
 
-        // --- 5. SEVİYE: SİHİRLİ STİL ATÖLYESİ MANTIĞI ---
+        // --- 4. SEVİYE: SİHİRLİ STİL ATÖLYESİ MANTIĞI ---
         function initStyleWorkshop() {
             hasTransformedAtLeastOnce = false;
             document.getElementById('style-select-view').classList.remove('hidden');
@@ -1040,7 +1102,7 @@
                 card.onclick = () => selectStyleCharacter(char);
                 card.innerHTML = `
                     <div class="w-full aspect-square rounded-2xl overflow-hidden mb-3 border-2 border-slate-200 bg-slate-100">
-                        <img src="${char.images.original}" alt="${char.name}" class="w-full h-full object-cover">
+                        <img src="${char.images.original}" onerror="this.src='https://placehold.co/400x400/e879f9/ffffff?text=Karakter'" alt="${char.name}" class="w-full h-full object-cover">
                     </div>
                     <h3 class="font-extrabold text-slate-800 text-base sm:text-lg mb-3 text-center">${char.name}</h3>
                     <button class="w-full bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-extrabold py-2.5 rounded-xl border-b-4 border-fuchsia-700 text-sm flex items-center justify-center gap-2 mt-auto">
@@ -1097,7 +1159,6 @@
             badgeEl.innerText = styleLabels[styleKey].text;
             badgeEl.className = `${styleLabels[styleKey].cls} border text-xs font-extrabold px-2.5 py-0.5 rounded-full`;
 
-            // En az bir çizim stiline dönüştürüldüyse Dijital Dedektif bilgi kutusunu göster
             if (styleKey !== 'original') {
                 confetti({ particleCount: 55, spread: 60, origin: { y: 0.65 } });
                 if (!hasTransformedAtLeastOnce) {
@@ -1118,8 +1179,96 @@
             }
         }
 
-        // --- 4. SEVİYE: ZAMAN MAKİNESİ MANTIĞI ---
+        // --- SERTİFİKA İNDİRME FONKSİYONU (Canvas İle PNG Oluşturma) ---
+        function downloadCertificate() {
+            playSound('win');
+            const nameInput = document.getElementById('detective-name-input').value.trim();
+            const detectiveName = nameInput.length > 0 ? nameInput.toUpperCase() : "SÜPER DİJİTAL DEDEKTİF";
+
+            const canvas = document.createElement('canvas');
+            canvas.width = 1000;
+            canvas.height = 700;
+            const ctx = canvas.getContext('2d');
+
+            // Arka plan gradyanı
+            const bgGrad = ctx.createLinearGradient(0, 0, 1000, 700);
+            bgGrad.addColorStop(0, '#fefce8');
+            bgGrad.addColorStop(1, '#fef08a');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, 1000, 700);
+
+            // Dış çerçeve
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 24;
+            ctx.strokeRect(24, 24, 952, 652);
+
+            // İç kesikli çerçeve
+            ctx.strokeStyle = '#0284c7';
+            ctx.lineWidth = 6;
+            ctx.setLineDash([16, 10]);
+            ctx.strokeRect(52, 52, 896, 596);
+            ctx.setLineDash([]);
+
+            // Üst Rozet İkonu ve Başlık
+            ctx.textAlign = 'center';
+            ctx.font = 'bold 64px sans-serif';
+            ctx.fillText('🏆', 500, 145);
+
+            ctx.fillStyle = '#0369a1';
+            ctx.font = 'bold 42px sans-serif';
+            ctx.fillText('USTA DİJİTAL DEDEKTİF SERTİFİKASI', 500, 215);
+
+            ctx.fillStyle = '#78350f';
+            ctx.font = '600 24px sans-serif';
+            ctx.fillText('Bu başarı belgesi, dijital dünyayı keşfetme görevlerini üstün başarıyla tamamlayan', 500, 275);
+
+            // Dedektif Adı
+            ctx.fillStyle = '#be123c';
+            ctx.font = 'bold 48px sans-serif';
+            ctx.fillText(detectiveName, 500, 355);
+
+            // Alt çizgi
+            ctx.strokeStyle = '#fbbf24';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(220, 375);
+            ctx.lineTo(780, 375);
+            ctx.stroke();
+
+            ctx.fillStyle = '#1e293b';
+            ctx.font = 'bold 26px sans-serif';
+            ctx.fillText('adlı öğrenciye "Geleceğin Dijital Okuryazar Dedektifi" unvanıyla verilmiştir.', 500, 430);
+
+            // Kazanılan Rozetler Kutusu
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(140, 475, 720, 70);
+            ctx.strokeStyle = '#10b981';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(140, 475, 720, 70);
+
+            ctx.fillStyle = '#047857';
+            ctx.font = 'bold 21px sans-serif';
+            ctx.fillText('✨ Fotoğraf Ustası  •  🧩 Yapboz Kahramanı  •  ⏳ Zaman Yolcusu  •  🎨 Stil Sihirbazı', 500, 518);
+
+            // Tarih ve İmza
+            const today = new Date().toLocaleDateString('tr-TR');
+            ctx.fillStyle = '#475569';
+            ctx.font = 'bold 20px sans-serif';
+            ctx.fillText(`Tarih: ${today}   |   Süper Çocuk Fotoğraf Stüdyosu`, 500, 610);
+
+            // İndirme tetikleme
+            const link = document.createElement('a');
+            link.download = `Dijital_Dedektif_Sertifikasi_${detectiveName.replace(/\s+/g, '_')}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // --- 3. SEVİYE: ZAMAN MAKİNESİ MANTIĞI ---
         function loadTimeMachinePhoto(index) {
+            if (tmRevealTimeout) {
+                clearTimeout(tmRevealTimeout);
+                tmRevealTimeout = null;
+            }
             const data = timeMachinePhotos[index];
             isTmRestored = false;
 
@@ -1131,7 +1280,6 @@
             document.getElementById('tm-next-btn').classList.add('hidden');
             document.getElementById('tm-compare-container').classList.remove('photo-success-border');
 
-            // Adım göstergelerini güncelle
             const stepContainer = document.getElementById('tm-step-indicators');
             stepContainer.innerHTML = '';
             timeMachinePhotos.forEach((_, idx) => {
@@ -1140,7 +1288,6 @@
                 stepContainer.appendChild(dot);
             });
 
-            // Kaydırıcıyı başlangıç pozisyonuna (%5) getir
             updateTimeMachineSlider(5);
         }
 
@@ -1152,7 +1299,6 @@
             document.getElementById('tm-slider-handle').style.left = `${clamped}%`;
             document.getElementById('tm-percent-text').innerText = `%${Math.round(clamped)}`;
 
-            // %97 ve üzerine çekildiğinde tam onarıldı kabul et
             if (clamped >= 97 && !isTmRestored) {
                 isTmRestored = true;
                 isTmDragging = false;
@@ -1164,11 +1310,15 @@
                 confetti({ particleCount: 90, spread: 75, origin: { y: 0.6 } });
 
                 document.getElementById('tm-compare-container').classList.add('photo-success-border');
-                document.getElementById('tm-success-overlay').classList.remove('hidden');
 
-                const nextBtn = document.getElementById('tm-next-btn');
-                nextBtn.querySelector('span').innerText = currentTmIndex < timeMachinePhotos.length - 1 ? "Sonraki Fotoğrafa Geç" : "Bölümü Tamamla!";
-                nextBtn.classList.remove('hidden');
+                // Onarılan renkli fotoğrafın 2 saniye boyunca net şekilde incelenmesini sağla
+                tmRevealTimeout = setTimeout(() => {
+                    document.getElementById('tm-success-overlay').classList.remove('hidden');
+
+                    const nextBtn = document.getElementById('tm-next-btn');
+                    nextBtn.querySelector('span').innerText = currentTmIndex < timeMachinePhotos.length - 1 ? "Sonraki Fotoğrafa Geç" : "Bölümü Tamamla!";
+                    nextBtn.classList.remove('hidden');
+                }, 2000);
             }
         }
 
@@ -1181,7 +1331,6 @@
             updateTimeMachineSlider(pct);
         }
 
-        // Zaman Makinesi Fare ve Dokunmatik Olay Dinleyicileri
         const tmContainer = document.getElementById('tm-compare-container');
         tmContainer.addEventListener('mousedown', (e) => {
             if (isTmRestored) return;
@@ -1223,6 +1372,15 @@
         }
 
         // --- 1. SEVİYE: FOTOĞRAF EDİTÖRÜ MANTIĞI ---
+        function resetCurrentPhotoFilters() {
+            playSound('click');
+            const data = photosData[currentPhotoIndex];
+            document.getElementById('brightness-slider').value = data.initial.brightness;
+            document.getElementById('contrast-slider').value = data.initial.contrast;
+            document.getElementById('saturate-slider').value = data.initial.saturate;
+            updateImageFilters();
+        }
+
         function loadPhoto(index) {
             const data = photosData[index];
             isCurrentPhotoPassed = false;
@@ -1231,7 +1389,6 @@
             const imgEl = document.getElementById('editable-image');
             imgEl.src = data.url;
 
-            // Kaydıraçları sıfırla
             document.getElementById('brightness-slider').value = data.initial.brightness;
             document.getElementById('contrast-slider').value = data.initial.contrast;
             document.getElementById('saturate-slider').value = data.initial.saturate;
@@ -1253,7 +1410,7 @@
             container.innerHTML = '';
             photosData.forEach((_, idx) => {
                 const dot = document.createElement('div');
-                dot.className = `w-3 h-3 rounded-full ${idx === currentPhotoIndex ? 'bg-amber-500 scale-125' : 'bg-slate-300'}`;
+                dot.className = `w-3 h-3 rounded-full ${idx === currentPhotoIndex ? 'bg-amber-500 scale-125' : (idx < currentPhotoIndex ? 'bg-emerald-500' : 'bg-slate-300')}`;
                 container.appendChild(dot);
             });
         }
@@ -1315,7 +1472,7 @@
                 card.onclick = () => selectPuzzleImage(item);
                 card.innerHTML = `
                     <div class="w-full aspect-square rounded-2xl overflow-hidden mb-3 border-2 border-slate-200">
-                        <img src="${item.url}" class="w-full h-full object-cover">
+                        <img src="${item.url}" onerror="this.src='https://placehold.co/400x400/a855f7/ffffff?text=Yapboz'" class="w-full h-full object-cover">
                     </div>
                     <h3 class="font-bold text-slate-800 text-base mb-2 text-center">${item.baslik}</h3>
                     <button class="w-full bg-purple-500 text-white font-extrabold py-2 rounded-xl border-b-4 border-purple-700 text-sm">
@@ -1369,13 +1526,11 @@
                 piece.style.backgroundSize = '300% 300%';
                 piece.style.backgroundPosition = `${col * 50}% ${row * 50}%`;
 
-                // Drag & Drop olayları
                 piece.ondragstart = (e) => {
                     e.dataTransfer.setData('text/plain', idx);
                     selectedPieceEl = piece;
                 };
 
-                // Tıklayarak seçme
                 piece.onclick = () => {
                     playSound('click');
                     document.querySelectorAll('#puzzle-pieces-pool div').forEach(el => el.classList.remove('ring-4', 'ring-purple-600'));
@@ -1386,7 +1541,6 @@
                 pool.appendChild(piece);
             });
 
-            // 3x3 Tahtasını Oluştur
             for (let i = 0; i < 9; i++) {
                 const slot = document.createElement('div');
                 slot.className = "w-full h-full bg-slate-800/50 rounded-xl border-2 border-dashed border-slate-600 flex items-center justify-center relative overflow-hidden";
@@ -1412,7 +1566,6 @@
         function attemptPlacePiece(slot, pieceIdx) {
             const slotIdx = slot.dataset.slotIdx;
             if (parseInt(slotIdx) === parseInt(pieceIdx)) {
-                // Doğru Yerleştirme
                 playSound('pop');
                 slot.innerHTML = '';
                 if (selectedPieceEl) {
@@ -1433,7 +1586,6 @@
                     }, 400);
                 }
             } else {
-                // Yanlış Yerleştirme
                 playSound('error');
                 slot.classList.add('animate-shake', 'border-red-500');
                 setTimeout(() => {
@@ -1442,7 +1594,7 @@
             }
         }
 
-        // --- 3. SEVİYE: DİJİTAL DEDEKTİF TEST MANTIĞI ---
+        // --- 5. SEVİYE: DİJİTAL DEDEKTİF TEST MANTIĞI ---
         function startDetectiveQuiz() {
             currentQuizIndex = 0;
             detectiveScore = 0;
@@ -1497,26 +1649,22 @@
             const feedbackEl = document.getElementById('quiz-feedback');
 
             if (userAnswer === q.answer) {
-                // Doğru Cevap
                 playSound('win');
                 detectiveScore += 10;
                 document.getElementById('detective-score').innerText = `${detectiveScore} Rozet`;
 
-                // Rozet Konfeti Efekti
                 confetti({ particleCount: 50, spread: 50, origin: { y: 0.6 } });
 
                 currentQuizIndex++;
                 if (currentQuizIndex < detectiveQuestions.length) {
                     loadQuizQuestion(currentQuizIndex);
                 } else {
-                    // Test Tamamlandı
                     document.getElementById('quiz-progress-bar').style.width = '100%';
                     setTimeout(() => {
                         showCompletionScreen(5);
                     }, 500);
                 }
             } else {
-                // Yanlış Cevap
                 playSound('error');
                 feedbackEl.className = "p-3 mb-4 rounded-xl text-sm font-bold text-center bg-rose-100 text-rose-900 border-2 border-rose-300 animate-shake";
                 feedbackEl.innerHTML = "Bir daha düşün! Dijital dedektifler detayları inceler 🕵️‍♂️";
@@ -1591,7 +1739,6 @@
                 confetti({ particleCount: 250, spread: 110, origin: { y: 0.4 } });
             }
         }
-
     </script>
 </body>
 </html>
